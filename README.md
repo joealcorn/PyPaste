@@ -7,9 +7,9 @@ Simple pastebin using Flask, Flask-SQLAlchemy and Pygments
 Dependencies
 ===
 
-Flask
-Flask-SQLAlchemy
-Pygments
+Flask  
+Flask-SQLAlchemy  
+Pygments  
 
 Creating the database
 ===
