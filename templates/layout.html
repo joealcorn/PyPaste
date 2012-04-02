@@ -1,0 +1,20 @@
+<!doctype html>
+
+<title>buttscicles</title>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='highlight.css') }}">
+<link rel="shortcut icon" href="static/favicon.ico" type="image/x-icon" >
+
+    <div class="page">
+        <a href="{{ url_for('index') }}"><h1>pastebin</h1></a>
+        <div class="metanav">
+            <a href="{{url_for('view_list')}}">view recent pastes</a> | <a href="{{ url_for('index') }}">new paste</a>
+        </div>
+        {% if error %}<p class="error"><strong>Error:</strong> {{ error|safe }}{% endif %}
+            {% for message in get_flashed_messages() %}
+                <div class="flash">{{ message }}</div>
+            {% endfor %}
+        {% block body %}{% endblock %}
+        <p class="footer-text">Powered by <a href="http://flask.pocoo.org" target="_blank">Flask</a> and <a href="http://pygments.org/" target="_blank">Pygments</a></p>
+    </div>
+

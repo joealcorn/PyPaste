@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% block body %}
+    <div class="recent">
+        <h3>Recent pastes</h3>
+        <ul class=list_recent>
+        {% for paste in pastes %}
+            <li><p2><a href="{{ url_for('view_list') }}{{ paste.id }}">{{ paste.title }}</a><br>{{ paste.posted }} ago</p2></li>
+        {% else %}
+            <li><p2>There's nothing here yet!<br><a href="{{ url_for('index') }}">Change that!</a></p2></li>
+        {% endfor %}
+        </ul>
+    </div>    
+            <form action="{{ url_for('add') }}" method="post"> 
+                    <textarea class="textedit" name="contents" rows="15"></textarea>           
+                    <p2>Title (Optional)
+                    <input type="text" name="title" maxlength="40">
+                    <!--Password (Not working yet)
+                    <input type="password" name="password" maxlength="20">-->
+                    Language
+                    <select name="language">
+                        <option value="none">None</option>
+                        <option value="c">C</option>
+                        <option value="csharp">C#</option>
+                        <option value="cpp">C++</option>
+                        <option value="css">CSS</option>
+                        <option value="erlang">Erlang</option>
+                        <option value="go">Go</option>
+                        <option value="html">HTML</option>                                               
+                        <option value="java">Java</option>
+                        <option value="javascript">JavaScript</option>
+                    <!--<option value="json">JSON</option>-->
+                        <option value="objectivec">Objective-C</option>
+                        <option value="perl">Perl</option>
+                    <!--<option value="postgresql">PostgresSQL</option>-->
+                        <option value="python">Python</option>
+                        <option value="python3">Python 3</option>
+                        <option value="ruby">Ruby</option>
+                        <option value="sql">SQL</option>
+                        <option value="vbnet">VB.NET</option>
+                    </select>
+                    </p2>
+                    <input type="submit" value="Paste!">
+            </form>   
+{% endblock %}
