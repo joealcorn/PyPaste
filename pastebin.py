@@ -67,6 +67,7 @@ def view_paste(paste_id):
     cur_paste = paste.query.get(paste_id)
     if cur_paste == None:
         abort(404)
+    title = cur_paste.title
     try: highlighted = highlight.syntax(cur_paste.contents, cur_paste.language)
     except:
         ''' In the case where the user was able to select a language which has no syntax highlighting configured 
@@ -78,7 +79,7 @@ def view_paste(paste_id):
         thing.title = thing.title[:15]
         thing.posted = datetime.utcnow() - thing.posted
         thing.posted = str(thing.posted).split('.')[0]
-    return render_template('view_paste.html', cur_paste=cur_paste, recent_pastes=recent_pastes, highlighted=highlighted, error=error)
+    return render_template('view_paste.html', cur_paste=cur_paste, recent_pastes=recent_pastes, highlighted=highlighted, title=title, error=error)
 
 # API
 
@@ -86,7 +87,7 @@ def view_paste(paste_id):
 def api_add():
     r = request
     try: addPaste(r.form['title'], r.form['contents'], None, r.form['language'])
-    except: return jsonify(success=True)
+    except: return jsonify(success=False)
     pastes = paste.query.order_by(paste.posted.desc()).limit(1).all()
      
     return jsonify(success=True, url=(url_for('view_list')+str(pastes[0].id)))
