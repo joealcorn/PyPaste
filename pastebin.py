@@ -60,7 +60,7 @@ def view_list():
         thing.posted = str(thing.posted).split('.')[0]
     return render_template('paste_list.html', pastes=pastes, error=error)
 
-@app.route('/view/<int:paste_id>')
+@app.route('/view/<int:paste_id>/')
 def view_paste(paste_id):
     error = None
     highlighted = None
