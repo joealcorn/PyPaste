@@ -44,7 +44,8 @@ def index():
     error = None
     pastes = paste.query.order_by(paste.posted.desc()).limit(7).all()
     for thing in pastes:
-        thing.title = thing.title[:15]
+        if len(thing.title) >= 15:
+            thing.title = thing.title[:12] + '...'
         thing.posted = datetime.utcnow() - thing.posted
         thing.posted = str(thing.posted).split('.')[0]
     return render_template('add_paste.html', pastes=pastes, error=error)
@@ -76,7 +77,8 @@ def view_paste(paste_id):
         highlighted = highlight.syntax(cur_paste.contents, 'none')
     recent_pastes = paste.query.order_by(paste.posted.desc()).limit(7).all()
     for thing in recent_pastes:
-        thing.title = thing.title[:15]
+        if len(thing.title) >= 15:
+            thing.title = thing.title[:12] + '...'
         thing.posted = datetime.utcnow() - thing.posted
         thing.posted = str(thing.posted).split('.')[0]
     return render_template('view_paste.html', cur_paste=cur_paste, recent_pastes=recent_pastes, highlighted=highlighted, title=title, error=error)
