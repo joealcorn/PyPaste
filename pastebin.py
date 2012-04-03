@@ -25,6 +25,9 @@ class paste(db.Model):
 def addPaste(title, contents, password, language):
     if title == '':
         title = "Untitled"
+    if contents == '':
+        flash('You need to paste some text')
+        return
     p = paste(title, contents, password, language)
     db.session.add(p)
     db.session.commit()
