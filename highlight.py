@@ -3,7 +3,7 @@ from pygments.lexers import *
 from pygments.formatters import HtmlFormatter
 from pygments.lexers import guess_lexer, guess_lexer_for_filename
 
-formatter = HtmlFormatter(linenos=True, cssclass="highlight")
+formatter = HtmlFormatter(linenos=True, lineanchors='line', anchorlinenos=True)
 languages = {
                 'none': TextLexer(),
                 'c': CLexer(),
