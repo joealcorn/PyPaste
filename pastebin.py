@@ -29,8 +29,6 @@ class paste(db.Model):
 def addPaste(title, contents, password, language, unlisted, p_hash):
     if title.strip() == '':
         title = "Untitled"
-    if contents.strip() == '':
-        return redirect(url_for('index'))
     p = paste(title, contents, password, language, unlisted, p_hash)
     db.session.add(p)
     db.session.commit()
@@ -40,7 +38,7 @@ def add():
     r = request
     if r.method == 'GET':
         return redirect(url_for('index'))
-    if r.form['contents'].strip(' ') == '':
+    if r.form['contents'].strip() == '':
         flash('You need to paste some text')
         return redirect(url_for('index'))
         
