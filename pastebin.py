@@ -49,7 +49,7 @@ def add():
     
     if r.form['unlisted'] == '1':
         flash('Unlisted paste created! It can only be accessed via this URL, so be careful who you share it with')
-        return redirect(url_for('index')+'unlisted/'+str(p.id))    
+        return redirect(url_for('index')+'unlisted/'+str(p.p_hash))    
     else:
         return redirect(url_for('view_list')+str(p.id))
 
@@ -134,7 +134,7 @@ def api_add():
     p = addPaste(r.form['title'], r.form['contents'], None, r.form['language'], r.form['unlisted'], p_hash)
     pastes = paste.query.order_by(paste.posted.desc()).limit(1).all()
     if r.form['unlisted'] == '1':
-        return jsonify(success=True, url=url_for('index', _external=True)+'unlisted/'+str(p.id))    
+        return jsonify(success=True, url=url_for('index', _external=True)+'unlisted/'+str(p.p_hash))    
     else:
         return jsonify(success=True, url=url_for('view_list', _external=True)+str(p.id))
 
