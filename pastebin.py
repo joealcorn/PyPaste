@@ -32,6 +32,7 @@ def addPaste(title, contents, password, language, unlisted, p_hash):
     p = paste(title, contents, password, language, unlisted, p_hash)
     db.session.add(p)
     db.session.commit()
+    return p
     
 @app.route('/add/', methods=['POST', 'GET'])
 def add():
@@ -43,14 +44,14 @@ def add():
         return redirect(url_for('index'))
         
     p_hash = str(random.getrandbits(50))[:7]
-    addPaste(r.form['title'], r.form['contents'], None, r.form['language'], r.form['unlisted'], p_hash)
+    p = addPaste(r.form['title'], r.form['contents'], None, r.form['language'], r.form['unlisted'], p_hash)
     pastes = paste.query.order_by(paste.posted.desc()).limit(1).all()
     
     if r.form['unlisted'] == '1':
         flash('Unlisted paste created! It can only be accessed via this URL, so be careful who you share it with')
-        return redirect(url_for('index')+'unlisted/'+str(pastes[0].p_hash))    
+        return redirect(url_for('index')+'unlisted/'+str(p.id))    
     else:
-        return redirect(url_for('view_list')+str(pastes[0].id))
+        return redirect(url_for('view_list')+str(p.id))
 
 # Pages
 
@@ -130,12 +131,12 @@ def api_add():
     if r.form['contents'] == '':
         return jsonify(success=False, error='No content')
     p_hash = str(random.getrandbits(50))[:7]
-    addPaste(r.form['title'], r.form['contents'], None, r.form['language'], r.form['unlisted'], p_hash)
+    p = addPaste(r.form['title'], r.form['contents'], None, r.form['language'], r.form['unlisted'], p_hash)
     pastes = paste.query.order_by(paste.posted.desc()).limit(1).all()
     if r.form['unlisted'] == '1':
-        return jsonify(success=True, url=url_for('index', _external=True)+'unlisted/'+str(pastes[0].p_hash))    
+        return jsonify(success=True, url=url_for('index', _external=True)+'unlisted/'+str(p.id))    
     else:
-        return jsonify(success=True, url=url_for('view_list', _external=True)+str(pastes[0].id))
+        return jsonify(success=True, url=url_for('view_list', _external=True)+str(p.id))
 
 
 # Errors
