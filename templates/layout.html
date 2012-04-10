@@ -8,7 +8,7 @@
     <div class="page">
         <a href="{{ url_for('index') }}"><h1>pastebin</h1></a>
         <div class="metanav">
-            <a href="{{url_for('view_list')}}">view recent pastes</a> | <a href="{{ url_for('index') }}">new paste</a>
+            <a href="{{url_for('view_list')}}">view recent pastes</a> | <a href="{{ url_for('index') }}">new paste</a> | <a href="{{ url_for('api') }}">api</a>
         </div>
         {% if error %}<p class="error"><strong>Error:</strong> {{ error|safe }}{% endif %}
             {% for message in get_flashed_messages() %}
