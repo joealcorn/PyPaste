@@ -118,6 +118,10 @@ def view_unlisted_paste(paste_hash):
         thing.posted = str(thing.posted).split('.')[0]
     return render_template('view_paste.html', cur_paste=cur_paste, recent_pastes=recent_pastes, highlighted=highlighted, title=title, error=error)
 
+@app.route('/api/')
+def api():
+    return render_template('api.html')
+
 # API
 
 @app.route('/api/add', methods=['POST'])

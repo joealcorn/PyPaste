@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block body %}
+        <h2>api documentation</h2><br>
+        <p2>To create a paste, send an HTTP POST request to <strong>{{url_for('api_add', _external=True)}}</strong> with <strong>title, contents, language</strong> and <strong>unlisted</strong> parameters</p>
+            </p>Language should be any of the choices available via the drop down menu on the submit paste page, and unlisted should be 1 or 0 for true or false respectively. An example is shown below
+        </p2><br>
+
+<!-- Python Highlighting -->
+<div class="highlight"><pre><span class="kn">import</span> <span class="nn">urllib</span><span class="o">,</span> <span class="nn">urllib2</span>
+
+<span class="k">def</span> <span class="nf">addPaste</span><span class="p">():</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s">{{url_for('api_add', _external=True)}}</span>
+    <span class="n">values</span> <span class="o">=</span>    <span class="p">{</span><span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="s">&#39;Example title&#39;</span><span class="p">,</span>
+                <span class="s">&#39;contents&#39;</span><span class="p">:</span> <span class="s">&#39;The contents of the paste would go here!&#39;</span><span class="p">,</span>
+                <span class="s">&#39;language&#39;</span><span class="p">:</span> <span class="s">&#39;text&#39;</span><span class="p">,</span>
+                <span class="s">&#39;unlisted&#39;</span><span class="p">:</span> <span class="mi">0</span>
+                <span class="p">}</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlencode</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">request</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">dorequest</span> <span class="o">=</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">urllib2</span><span class="o">.</span><span class="n">URLError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">e</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">dorequest</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">response</span>
+</pre></div>
+        
+        <br><p2>If all goes well, you should get a json response similar to the following, for you to parse:</p2>
+        
+<!-- JSON Highlighting -->      
+<div class="highlight"><pre><span class="p">{</span>
+  <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;{{url_for('index', _external=True)}}view/5&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+
+{% endblock %}
