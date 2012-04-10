@@ -133,9 +133,9 @@ def api_add():
     addPaste(r.form['title'], r.form['contents'], None, r.form['language'], r.form['unlisted'], p_hash)
     pastes = paste.query.order_by(paste.posted.desc()).limit(1).all()
     if r.form['unlisted'] == '1':
-        return jsonify(success=True, url=url_for('index')+'unlisted/'+str(pastes[0].p_hash))    
+        return jsonify(success=True, url=url_for('index', _external=True)+'unlisted/'+str(pastes[0].p_hash))    
     else:
-        return jsonify(success=True, url=url_for('view_list')+str(pastes[0].id))
+        return jsonify(success=True, url=url_for('view_list', _external=True)+str(pastes[0].id))
 
 
 # Errors
