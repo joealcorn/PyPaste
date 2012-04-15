@@ -127,7 +127,7 @@ def api_add():
     if r.form['contents'] == '':
         return jsonify(success=False, error='No content')
     p_hash = str(random.getrandbits(50))[:7]
-    p = addPaste(r.form['title'], r.form['contents'], None, r.form['language'], r.form['unlisted'], p_hash)
+    p = addPaste(r.form['title'], r.form['contents'], None, r.form['language'].lower(), r.form['unlisted'], p_hash)
     pastes = paste.query.order_by(paste.posted.desc()).limit(1).all()
     if r.form['unlisted'] == '1':
         return jsonify(success=True, url=url_for('index', _external=True)+'unlisted/'+str(p.p_hash))    
