@@ -1,7 +1,7 @@
 from flask import Flask, redirect, url_for, render_template, flash, request, abort, jsonify
 from flaskext.sqlalchemy import SQLAlchemy
 from datetime import datetime
-import highlight, random
+import highlight, random, pretty_age
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -18,7 +18,7 @@ class paste(db.Model):
     p_hash = db.Column(db.String(6))
     
     def __init__(self, title, contents, password, language, unlisted, p_hash):
-        self.posted = datetime.utcnow()
+        self.posted = datetime.now()
         self.title = title
         self.contents = contents
         self.password = password
@@ -62,8 +62,7 @@ def index():
     for thing in pastes:
         if len(thing.title) >= 15:
             thing.title = thing.title[:12] + '...'
-        thing.posted = datetime.utcnow() - thing.posted
-        thing.posted = str(thing.posted).split('.')[0]
+        thing.posted = pretty_age.get_age(thing.posted)
     return render_template('add_paste.html', pastes=pastes, error=error)
 
 @app.route('/view/')
@@ -73,8 +72,7 @@ def view_list():
     for thing in pastes:
         thing.title = thing.title[:50]
         thing.contents = thing.contents[:40]
-        thing.posted = datetime.utcnow() - thing.posted
-        thing.posted = str(thing.posted).split('.')[0]
+        thing.posted = pretty_age.get_age(thing.posted)
     return render_template('paste_list.html', pastes=pastes, error=error)
 
 @app.route('/view/<int:paste_id>/')
@@ -95,8 +93,7 @@ def view_paste(paste_id):
     for thing in recent_pastes:
         if len(thing.title) >= 15:
             thing.title = thing.title[:12] + '...'
-        thing.posted = datetime.utcnow() - thing.posted
-        thing.posted = str(thing.posted).split('.')[0]
+        thing.posted = pretty_age.get_age(thing.posted)
     return render_template('view_paste.html', cur_paste=cur_paste, recent_pastes=recent_pastes, highlighted=highlighted, title=title, error=error)
 
 @app.route('/unlisted/<int:paste_hash>/')
@@ -115,8 +112,7 @@ def view_unlisted_paste(paste_hash):
     for thing in recent_pastes:
         if len(thing.title) >= 15:
             thing.title = thing.title[:12] + '...'
-        thing.posted = datetime.utcnow() - thing.posted
-        thing.posted = str(thing.posted).split('.')[0]
+        thing.posted = pretty_age.get_age(thing.posted)
     return render_template('view_paste.html', cur_paste=cur_paste, recent_pastes=recent_pastes, highlighted=highlighted, title=title, error=error)
 
 @app.route('/api/')
