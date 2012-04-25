@@ -11,13 +11,11 @@
         </ul>
     </div>    
             <form action="{{ url_for('add') }}" method="post"> 
-                    <textarea class="textedit" name="contents" rows="15"></textarea>           
-                    <p2>Title (Optional)
-                    <input type="text" name="title" maxlength="40">
-                    <!--Password (Not working yet)
-                    <input type="password" name="password" maxlength="20">-->
-                    Language
+                    <textarea class="textedit" name="contents" rows="15" placeholder="Paste contents"></textarea>           
+                    <input type="text" name="title" maxlength="40" placeholder="Title (optional)">
+                    <!--<input type="password" name="password" maxlength="30" placeholder="Password (optional)">-->
                     <select name="language">
+                        <option value="text">Language</option>
                         <option value="text">Text</option>
                         <option value="c">C</option>
                         <option value="csharp">C#</option>
@@ -38,10 +36,9 @@
                         <option value="sql">SQL</option>
                         <option value="vbnet">VB.NET</option>
                     </select>
-                    <input type="submit" value="Paste!">
-                    <br>Unlisted:
+                    <p2>Unlisted:
                     <input type="radio" name="unlisted" value="1"/> Yes
-                    <input type="radio" name="unlisted" value="0" checked="true"/> No
-                    </p2>
+                    <input type="radio" name="unlisted" value="0" checked="true"/> No</p2>
+                    <input type="submit" value="Paste!">
             </form>   
 {% endblock %}
