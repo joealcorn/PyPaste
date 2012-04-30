@@ -60,8 +60,6 @@ def index():
     error = None
     pastes = paste.query.filter_by(unlisted=0).order_by(paste.posted.desc()).limit(7).all()
     for thing in pastes:
-        if len(thing.title) >= 15:
-            thing.title = thing.title[:12] + '...'
         thing.posted = pretty_age.get_age(thing.posted)
     return render_template('add_paste.html', pastes=pastes, error=error)
 
@@ -70,8 +68,6 @@ def view_list():
     error = None
     pastes = paste.query.filter_by(unlisted=0).order_by(paste.posted.desc()).limit(40).all()
     for thing in pastes:
-        thing.title = thing.title[:50]
-        thing.contents = thing.contents[:40]
         thing.posted = pretty_age.get_age(thing.posted)
     return render_template('paste_list.html', pastes=pastes, error=error)
 
@@ -91,8 +87,6 @@ def view_paste(paste_id):
         highlighted = highlight.syntax(cur_paste.contents, 'none')
     recent_pastes = paste.query.filter_by(unlisted=0).order_by(paste.posted.desc()).limit(7).all()
     for thing in recent_pastes:
-        if len(thing.title) >= 15:
-            thing.title = thing.title[:12] + '...'
         thing.posted = pretty_age.get_age(thing.posted)
     return render_template('view_paste.html', cur_paste=cur_paste, recent_pastes=recent_pastes, highlighted=highlighted, title=title, error=error)
 
@@ -110,8 +104,6 @@ def view_unlisted_paste(paste_hash):
         highlighted = highlight.syntax(cur_paste.contents, 'none')
     recent_pastes = paste.query.filter_by(unlisted=0).order_by(paste.posted.desc()).limit(7).all()
     for thing in recent_pastes:
-        if len(thing.title) >= 15:
-            thing.title = thing.title[:12] + '...'
         thing.posted = pretty_age.get_age(thing.posted)
     return render_template('view_paste.html', cur_paste=cur_paste, recent_pastes=recent_pastes, highlighted=highlighted, title=title, error=error)
 
