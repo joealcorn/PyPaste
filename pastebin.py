@@ -41,8 +41,7 @@ def add():
         return redirect(url_for('index'))
     if r.form['contents'].strip() == '':
         flash('You need to paste some text')
-        return redirect(url_for('index'))
-        
+        return redirect(url_for('index'))  
     p_hash = str(random.getrandbits(50))[:7]
     p = addPaste(r.form['title'], r.form['contents'], None, r.form['language'], r.form['unlisted'], p_hash)
     pastes = paste.query.order_by(paste.posted.desc()).limit(1).all()
