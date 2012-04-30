@@ -1,5 +1,21 @@
 {% extends "layout.html" %}
 {% block body %}
+<script src="{{ url_for('static', filename='jquery.js') }}"></script>
+<script>        
+    $(document).ready(function(){
+        $("#unlisted").click(function(){
+
+            if ($("#unlisted").is(":checked"))
+            {
+                $("#unlistedtext").show("fast");
+            }
+            else
+            {
+                $("#unlistedtext").hide("medium");
+            }
+        });
+    });       
+</script>  
 
     <div class="recent">
         <h3>Recent pastes</h3>
@@ -15,7 +31,7 @@
                     <textarea class="textedit" name="contents" rows="15" placeholder="Paste contents"></textarea>           
                     <input type="text" name="title" maxlength="40" placeholder="Title (optional)">
                     <!--<input type="password" name="password" maxlength="30" placeholder="Password (optional)">-->
-                    <input type="checkbox" name="unlisted" value="1"/><p2>Unlisted</p2>
+                    <input type="checkbox" id="unlisted" name="unlisted" value="1"/><p2>Unlisted</p2>
                     <input type="hidden" name="unlisted" value="0" />
                     <select name="language">
                         <option value="text">Language</option>
@@ -40,5 +56,8 @@
                         <option value="vbnet">VB.NET</option>
                     </select>
                     <input type="submit" value="Paste!">
-            </form>            
+            </form> 
+            <div id="unlistedtext" class="flash">
+            This paste will be marked as unlisted; only visible to people you give the URL to.
+            </div>
 {% endblock %}

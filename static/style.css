@@ -24,3 +24,5 @@ td              { padding-right:5px;padding-left:5px;background-color:#EEE;}
 .time           { color:#757575 }
 .lang           { color:#757575 }
 
+#unlistedtext   { display:none; }
+
