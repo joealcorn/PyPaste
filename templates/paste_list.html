@@ -5,7 +5,7 @@
         <h3>Recent pastes</h3>
         <ul>
         {% for paste in pastes %}
-            <li><p1><a href="{{ url_for('view_paste', paste_id=paste.id) }}">{{ paste.title|truncate(length=50, killwords=False, end='...') }}</a></p1><p2> {{ paste.contents|truncate(length=60, killwords=False, end='...') }} <br>Language: <span class="lang">{{ paste.language }}</span> Pasted <span class="time">{{ paste.posted }} ago</span></p2></li>
+            <li><p1><a title="{{ paste.title }}" href="{{ url_for('view_paste', paste_id=paste.id) }}">{{ paste.title|truncate(length=50, killwords=False, end='...') }}</a></p1><p2> {{ paste.contents|truncate(length=60, killwords=False, end='...') }} <br>Language: <span class="lang">{{ paste.language }}</span> Pasted <span class="time">{{ paste.posted }} ago</span></p2></li>
         {% else %}
             <li><p2>There's nothing here yet!<br><a href="{{ url_for('index') }}">Change that!</a></p2></li>
         {% endfor %}
