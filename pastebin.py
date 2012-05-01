@@ -1,5 +1,5 @@
 from flask import Flask, redirect, url_for, render_template, flash, request, abort, jsonify
-from flaskext.sqlalchemy import SQLAlchemy
+from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import datetime
 import highlight, random, pretty_age
 
@@ -16,7 +16,7 @@ class paste(db.Model):
     language = db.Column(db.String(40))
     unlisted = db.Column(db.Integer(16))
     p_hash = db.Column(db.String(6))
-    
+
     def __init__(self, title, contents, password, language, unlisted, p_hash):
         self.posted = datetime.now()
         self.title = title
@@ -33,7 +33,7 @@ def addPaste(title, contents, password, language, unlisted, p_hash):
     db.session.add(p)
     db.session.commit()
     return p
-    
+
 @app.route('/add/', methods=['POST', 'GET'])
 def add():
     r = request
@@ -41,17 +41,17 @@ def add():
         return redirect(url_for('index'))
     if r.form['contents'].strip() == '':
         flash('You need to paste some text')
-        return redirect(url_for('index'))  
+        return redirect(url_for('index'))
     p_hash = str(random.getrandbits(50))[:7]
     p = addPaste(r.form['title'], r.form['contents'], None, r.form['language'], r.form['unlisted'], p_hash)
     pastes = paste.query.order_by(paste.posted.desc()).limit(1).all()
-    
+
     if r.form['unlisted'] == '1':
         flash('Unlisted paste created! It can only be accessed via this URL, so be careful who you share it with')
-        return redirect(url_for('view_unlisted_paste', paste_hash=p.p_hash))    
+        return redirect(url_for('view_unlisted_paste', paste_hash=p.p_hash))
     else:
         return redirect(url_for('view_paste', paste_id=p.id))
-        
+
 
 # Pages
 
@@ -81,9 +81,9 @@ def view_paste(paste_id):
     title = cur_paste.title
     try: highlighted = highlight.syntax(cur_paste.contents, cur_paste.language)
     except:
-        ''' In the case where the user was able to select a language which has no syntax highlighting configured 
+        ''' In the case where the user was able to select a language which has no syntax highlighting configured
             (by sending a POST request and not using the form) it will alert them to it '''
-        error = 'That language has no highlighting available! Oops! <a href="mailto://%(email)s">email</a> me and tell me to fix it!' % { 'email': app.config['EMAIL'] }    
+        error = 'That language has no highlighting available! Oops! <a href="mailto://%(email)s">email</a> me and tell me to fix it!' % { 'email': app.config['EMAIL'] }
         highlighted = highlight.syntax(cur_paste.contents, 'none')
     recent_pastes = paste.query.filter_by(unlisted=0).order_by(paste.posted.desc()).limit(7).all()
     for thing in recent_pastes:
@@ -100,7 +100,7 @@ def view_unlisted_paste(paste_hash):
     title = cur_paste.title
     try: highlighted = highlight.syntax(cur_paste.contents, cur_paste.language)
     except:
-        error = 'That language has no highlighting available! Oops! <a href="mailto://%(email)s">email</a> me and tell me to fix it!' % { 'email': app.config['EMAIL'] }    
+        error = 'That language has no highlighting available! Oops! <a href="mailto://%(email)s">email</a> me and tell me to fix it!' % { 'email': app.config['EMAIL'] }
         highlighted = highlight.syntax(cur_paste.contents, 'none')
     recent_pastes = paste.query.filter_by(unlisted=0).order_by(paste.posted.desc()).limit(7).all()
     for thing in recent_pastes:
@@ -115,14 +115,14 @@ def api():
 
 @app.route('/api/add', methods=['POST'])
 def api_add():
-    r = request  
+    r = request
     if r.form['contents'] == '':
         return jsonify(success=False, error='No content')
     p_hash = str(random.getrandbits(50))[:7]
     p = addPaste(r.form['title'], r.form['contents'], None, r.form['language'].lower(), r.form['unlisted'], p_hash)
     pastes = paste.query.order_by(paste.posted.desc()).limit(1).all()
     if r.form['unlisted'] == '1':
-        return jsonify(success=True, url=url_for('view_unlisted_paste', paste_hash=p.p_hash, _external=True))    
+        return jsonify(success=True, url=url_for('view_unlisted_paste', paste_hash=p.p_hash, _external=True))
     else:
         return jsonify(success=True, url=url_for('view_paste', paste_id=p.id, _external=True))
 
