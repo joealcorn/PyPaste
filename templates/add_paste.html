@@ -1,21 +1,21 @@
 {% extends "layout.html" %}
 {% block body %}
 <script src="{{ url_for('static', filename='jquery.js') }}"></script>
-<script>        
+<script>
     $(document).ready(function(){
         $("#unlisted").click(function(){
 
             if ($("#unlisted").is(":checked"))
             {
-                $("#unlistedtext").show("fast");
+                $("#unlistedtext").slideDown("fast");
             }
             else
             {
-                $("#unlistedtext").hide("medium");
+                $("#unlistedtext").slideUp("medium");
             }
         });
-    });       
-</script>  
+    });
+</script>
 
     <div class="recent">
         <h3>Recent pastes</h3>
@@ -26,9 +26,9 @@
             <li><p2>There's nothing here yet!<br><a href="{{ url_for('index') }}">Change that!</a></p2></li>
         {% endfor %}
         </ul>
-    </div>   
-            <form action="{{ url_for('add') }}" method="post"> 
-                    <textarea class="textedit" name="contents" rows="15" placeholder="Paste contents"></textarea>           
+    </div>
+            <form action="{{ url_for('add') }}" method="post">
+                    <textarea class="textedit" name="contents" rows="15" placeholder="Paste contents"></textarea>
                     <input type="text" name="title" maxlength="40" placeholder="Title (optional)">
                     <!--<input type="password" name="password" maxlength="30" placeholder="Password (optional)">-->
                     <input type="checkbox" id="unlisted" name="unlisted" value="1"/><p2>Unlisted</p2>
@@ -42,7 +42,7 @@
                         <option value="css">CSS</option>
                         <option value="erlang">Erlang</option>
                         <option value="go">Go</option>
-                        <option value="html">HTML</option>                                               
+                        <option value="html">HTML</option>
                         <option value="java">Java</option>
                         <option value="javascript">JavaScript</option>
                     <!--<option value="json">JSON</option>-->
@@ -56,7 +56,7 @@
                         <option value="vbnet">VB.NET</option>
                     </select>
                     <input type="submit" value="Paste!">
-            </form> 
+            </form>
             <div id="unlistedtext" class="flash">
             This paste will be marked as unlisted; only visible to people you give the URL to.
             </div>
