@@ -77,7 +77,7 @@ def delete():
         abort(401)
     r = request
     delPaste(r.form['pid'])
-
+    flash('Paste with ID #%s has been deleted' % r.form['pid'])
     return redirect(url_for('view_all_pastes'))
 
 
@@ -87,9 +87,11 @@ def login():
     password = hashPassword(r.form['password'])
     u = users.query.filter_by(username=r.form['username']).first()
     if u == None or u.password != password:
+        flash('Login failed')
         return redirect(url_for('loginPage'))
     else:
         session['logged_in'] = True
+        flash('Successfully logged in')
         return redirect(url_for('index'))
 
 # Pages
@@ -109,6 +111,7 @@ def loginPage():
 @app.route('/logout/')
 def logout():
     session.pop('logged_in', None)
+    flash('You were logged out')
     return redirect(url_for('index'))
 
 @app.route('/view/')
