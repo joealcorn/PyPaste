@@ -12,7 +12,8 @@ table           { border-collapse:collapse;width:100%;}
 td              { padding-right:5px;padding-left:5px;background-color:#EEE;}
 
 
-.page           { margin: 2em auto; width: 900px; border: 5px solid #ccc; padding: 0.8em; background: white; overflow:auto;}                 
+.centre         { text-align:center; }
+.page           { margin: 2em auto; width: 900px; border: 5px solid #ccc; padding: 0.8em; background: white; overflow:auto;}
 .metanav        { text-align: right; font-size: 0.8em; padding: 0.3em; margin-bottom: 1em; background: #fafafa; }
 .flash          { background: #CEE5F5; padding: 0.5em; border: 1px solid #AACBE2; }
 .error          { background: #F0D6D6; padding: 0.5em; }
@@ -23,6 +24,7 @@ td              { padding-right:5px;padding-left:5px;background-color:#EEE;}
 .text_area      { clear:both; font-family:monospace; background-color:#fafafa; border:1px solid #ccc; overflow:auto;}
 .time           { color:#757575 }
 .lang           { color:#757575 }
+.unlisted_title { color:#757575 }
 
 #unlistedtext   { display:none; }
 
