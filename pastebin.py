@@ -126,7 +126,6 @@ def view_paste(paste_id):
     cur_paste = pastes.query.get(paste_id)
     if cur_paste == None or cur_paste.unlisted == 1:
         abort(404)
-    title = cur_paste.title
     try: highlighted = highlight.syntax(cur_paste.contents, cur_paste.language)
     except:
         ''' In the case where the user was able to select a language which has no syntax highlighting configured
@@ -136,7 +135,7 @@ def view_paste(paste_id):
     recent_pastes = pastes.query.filter_by(unlisted=0).order_by(pastes.posted.desc()).limit(7).all()
     for thing in recent_pastes:
         thing.posted = pretty_age.get_age(thing.posted)
-    return render_template('view_paste.html', cur_paste=cur_paste, recent_pastes=recent_pastes, highlighted=highlighted, title=title, error=error)
+    return render_template('view_paste.html', cur_paste=cur_paste, recent_pastes=recent_pastes, highlighted=highlighted, error=error)
 
 @app.route('/view/all/')
 def view_all_pastes():
@@ -155,7 +154,6 @@ def view_unlisted_paste(paste_hash):
     cur_paste = pastes.query.filter_by(p_hash=paste_hash).first()
     if cur_paste == None:
         abort(404)
-    title = cur_paste.title
     try: highlighted = highlight.syntax(cur_paste.contents, cur_paste.language)
     except:
         error = 'That language has no highlighting available! Oops! <a href="mailto://%(email)s">email</a> me and tell me to fix it!' % { 'email': app.config['EMAIL'] }
@@ -163,7 +161,7 @@ def view_unlisted_paste(paste_hash):
     recent_pastes = pastes.query.filter_by(unlisted=0).order_by(pastes.posted.desc()).limit(7).all()
     for thing in recent_pastes:
         thing.posted = pretty_age.get_age(thing.posted)
-    return render_template('view_paste.html', cur_paste=cur_paste, recent_pastes=recent_pastes, highlighted=highlighted, title=title, error=error)
+    return render_template('view_paste.html', cur_paste=cur_paste, recent_pastes=recent_pastes, highlighted=highlighted, error=error)
 
 @app.route('/api/')
 def api():
