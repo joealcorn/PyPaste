@@ -11,9 +11,14 @@
         {% endfor %}
         </ul>
     </div>
-
     <div class="text_area">
         <h2>{{ title }}</h2><p2>Language: {{ cur_paste.language }}<br> Pasted {{ cur_paste.posted }} ago</p2>
+        {% if session.logged_in %}
+            <form action="{{ url_for('delete') }}" method="post">
+                <input type="submit" class="delete" value="Delete paste">
+                <input type="hidden" name="pid" value="{{ cur_paste.id }}">
+            </form>
+        {% endif %}
         {% if highlighted %}
             {{ highlighted|safe }}
         {% else %}

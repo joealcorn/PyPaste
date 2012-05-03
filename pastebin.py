@@ -1,7 +1,7 @@
-from flask import Flask, redirect, url_for, render_template, flash, request, abort, jsonify
+from flask import Flask, redirect, url_for, render_template, flash, request, abort, jsonify, session
 from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import datetime
-import highlight, random, pretty_age
+import highlight, random, pretty_age, hashlib
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -26,6 +26,20 @@ class pastes(db.Model):
         self.unlisted = unlisted
         self.p_hash = p_hash
 
+class users(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), nullable=False, unique=True)
+    password = db.Column(db.String(255), nullable=False)
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
+def hashPassword(password):
+    p = hashlib.new('sha256')
+    p.update(password + app.config['SECRET_KEY'])
+    return p.hexdigest()
+
 def addPaste(title, contents, password, language, unlisted, p_hash):
     if title.strip() == '':
         title = "Untitled"
@@ -34,7 +48,13 @@ def addPaste(title, contents, password, language, unlisted, p_hash):
     db.session.commit()
     return p
 
-@app.route('/add/', methods=['POST', 'GET'])
+def delPaste(id):
+    p = pastes.query.get(id)
+    db.session.delete(p)
+    db.session.commit()
+    return p
+
+@app.route('/add', methods=['POST', 'GET'])
 def add():
     r = request
     if r.method == 'GET':
@@ -51,6 +71,26 @@ def add():
     else:
         return redirect(url_for('view_paste', paste_id=p.id))
 
+@app.route('/del', methods=['POST'])
+def delete():
+    if 'logged_in' not in session.keys() or session['logged_in'] != True:
+        abort(401)
+    r = request
+    delPaste(r.form['pid'])
+
+    return redirect(url_for('view_all_pastes'))
+
+
+@app.route('/authenticate', methods=['POST'])
+def login():
+    r = request
+    password = hashPassword(r.form['password'])
+    u = users.query.filter_by(username=r.form['username']).first()
+    if u == None or u.password != password:
+        return redirect(url_for('loginPage'))
+    else:
+        session['logged_in'] = True
+        return redirect(url_for('index'))
 
 # Pages
 
@@ -61,6 +101,15 @@ def index():
     for thing in _pastes:
         thing.posted = pretty_age.get_age(thing.posted)
     return render_template('add_paste.html', pastes=_pastes, error=error)
+
+@app.route('/login/')
+def loginPage():
+    return render_template('login.html')
+
+@app.route('/logout/')
+def logout():
+    session.pop('logged_in', None)
+    return redirect(url_for('index'))
 
 @app.route('/view/')
 def view_list():
@@ -88,6 +137,16 @@ def view_paste(paste_id):
     for thing in recent_pastes:
         thing.posted = pretty_age.get_age(thing.posted)
     return render_template('view_paste.html', cur_paste=cur_paste, recent_pastes=recent_pastes, highlighted=highlighted, title=title, error=error)
+
+@app.route('/view/all/')
+def view_all_pastes():
+    if 'logged_in' not in session.keys() or session['logged_in'] != True:
+        abort(404)
+    all_pastes = pastes.query.order_by(pastes.posted.desc()).limit(40).all()
+    for paste in all_pastes:
+        paste.posted = pretty_age.get_age(paste.posted)
+    return render_template('paste_list.html', pastes=all_pastes)
+
 
 @app.route('/unlisted/<int:paste_hash>/')
 def view_unlisted_paste(paste_hash):
