@@ -29,7 +29,7 @@ class pastes(db.Model):
 def addPaste(title, contents, password, language, unlisted, p_hash):
     if title.strip() == '':
         title = "Untitled"
-    p = paste(title, contents, password, language, unlisted, p_hash)
+    p = pastes(title, contents, password, language, unlisted, p_hash)
     db.session.add(p)
     db.session.commit()
     return p
@@ -44,7 +44,6 @@ def add():
         return redirect(url_for('index'))
     p_hash = str(random.getrandbits(50))[:7]
     p = addPaste(r.form['title'], r.form['contents'], None, r.form['language'], r.form['unlisted'], p_hash)
-    pastes = paste.query.order_by(paste.posted.desc()).limit(1).all()
 
     if r.form['unlisted'] == '1':
         flash('Unlisted paste created! It can only be accessed via this URL, so be careful who you share it with')
@@ -58,24 +57,24 @@ def add():
 @app.route('/')
 def index():
     error = None
-    pastes = paste.query.filter_by(unlisted=0).order_by(paste.posted.desc()).limit(7).all()
-    for thing in pastes:
+    _pastes = pastes.query.filter_by(unlisted=0).order_by(pastes.posted.desc()).limit(7).all()
+    for thing in _pastes:
         thing.posted = pretty_age.get_age(thing.posted)
-    return render_template('add_paste.html', pastes=pastes, error=error)
+    return render_template('add_paste.html', pastes=_pastes, error=error)
 
 @app.route('/view/')
 def view_list():
     error = None
-    pastes = paste.query.filter_by(unlisted=0).order_by(paste.posted.desc()).limit(40).all()
-    for thing in pastes:
+    _pastes = pastes.query.filter_by(unlisted=0).order_by(pastes.posted.desc()).limit(40).all()
+    for thing in _pastes:
         thing.posted = pretty_age.get_age(thing.posted)
-    return render_template('paste_list.html', pastes=pastes, error=error)
+    return render_template('paste_list.html', pastes=_pastes, error=error)
 
 @app.route('/view/<int:paste_id>/')
 def view_paste(paste_id):
     error = None
     highlighted = None
-    cur_paste = paste.query.get(paste_id)
+    cur_paste = pastes.query.get(paste_id)
     if cur_paste == None or cur_paste.unlisted == 1:
         abort(404)
     title = cur_paste.title
@@ -85,7 +84,7 @@ def view_paste(paste_id):
             (by sending a POST request and not using the form) it will alert them to it '''
         error = 'That language has no highlighting available! Oops! <a href="mailto://%(email)s">email</a> me and tell me to fix it!' % { 'email': app.config['EMAIL'] }
         highlighted = highlight.syntax(cur_paste.contents, 'none')
-    recent_pastes = paste.query.filter_by(unlisted=0).order_by(paste.posted.desc()).limit(7).all()
+    recent_pastes = pastes.query.filter_by(unlisted=0).order_by(pastes.posted.desc()).limit(7).all()
     for thing in recent_pastes:
         thing.posted = pretty_age.get_age(thing.posted)
     return render_template('view_paste.html', cur_paste=cur_paste, recent_pastes=recent_pastes, highlighted=highlighted, title=title, error=error)
@@ -94,7 +93,7 @@ def view_paste(paste_id):
 def view_unlisted_paste(paste_hash):
     error = None
     highlighted = None
-    cur_paste = paste.query.filter_by(p_hash=paste_hash).first()
+    cur_paste = pastes.query.filter_by(p_hash=paste_hash).first()
     if cur_paste == None:
         abort(404)
     title = cur_paste.title
@@ -102,7 +101,7 @@ def view_unlisted_paste(paste_hash):
     except:
         error = 'That language has no highlighting available! Oops! <a href="mailto://%(email)s">email</a> me and tell me to fix it!' % { 'email': app.config['EMAIL'] }
         highlighted = highlight.syntax(cur_paste.contents, 'none')
-    recent_pastes = paste.query.filter_by(unlisted=0).order_by(paste.posted.desc()).limit(7).all()
+    recent_pastes = pastes.query.filter_by(unlisted=0).order_by(pastes.posted.desc()).limit(7).all()
     for thing in recent_pastes:
         thing.posted = pretty_age.get_age(thing.posted)
     return render_template('view_paste.html', cur_paste=cur_paste, recent_pastes=recent_pastes, highlighted=highlighted, title=title, error=error)
@@ -120,7 +119,6 @@ def api_add():
         return jsonify(success=False, error='No content')
     p_hash = str(random.getrandbits(50))[:7]
     p = addPaste(r.form['title'], r.form['contents'], None, r.form['language'].lower(), r.form['unlisted'], p_hash)
-    pastes = paste.query.order_by(paste.posted.desc()).limit(1).all()
     if r.form['unlisted'] == '1':
         return jsonify(success=True, url=url_for('view_unlisted_paste', paste_hash=p.p_hash, _external=True))
     else:
