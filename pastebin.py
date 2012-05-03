@@ -7,7 +7,7 @@ app = Flask(__name__)
 app.config.from_pyfile('config.py')
 db = SQLAlchemy(app)
 
-class paste(db.Model):
+class pastes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     posted = db.Column(db.DateTime)
     title = db.Column(db.String(50))
