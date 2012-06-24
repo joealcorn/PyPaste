@@ -16,6 +16,7 @@ languages = {
                 'html': HtmlLexer(),
                 'java': JavaLexer(),
                 'javascript': JavascriptLexer(),
+                'json': JSONLexer(),
                 'objectivec': ObjectiveCLexer(),
                 'perl': PerlLexer(),
                 'python': PythonLexer(),
