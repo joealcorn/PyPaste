@@ -1,7 +1,12 @@
+from datetime import datetime
+import hashlib
+import random
+
 from flask import Flask, redirect, url_for, render_template, flash, request, abort, jsonify, session
 from flask.ext.sqlalchemy import SQLAlchemy
-from datetime import datetime
-import highlight, random, pretty_age, hashlib
+
+import highlight
+import pretty_age
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
