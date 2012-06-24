@@ -1,6 +1,7 @@
 from datetime import datetime
 import hashlib
 import random
+from collections import Iterable
 
 from flask import Flask, redirect, url_for, render_template, flash, request, abort, jsonify, session
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -69,6 +70,17 @@ def generatePasteHash():
             break
     return p_hash
 
+def age(pastes):
+    ''' Changes the date to an age '''
+    if isinstance(pastes, Iterable):
+        for paste in pastes:
+            if not isinstance(paste.posted, str):
+                paste.posted = pretty_age.get_age(paste.posted)
+    else:
+        if not isinstance(pastes.posted, str):
+            pastes.posted = pretty_age.get_age(pastes.posted)
+    return pastes
+
 @app.route('/add', methods=['POST', 'GET'])
 def add():
     r = request
@@ -116,9 +128,7 @@ def login():
 def index():
     error = None
     _pastes = pastes.query.filter_by(unlisted=0).order_by(pastes.posted.desc()).limit(7).all()
-    for thing in _pastes:
-        thing.posted = pretty_age.get_age(thing.posted)
-    return render_template('add_paste.html', pastes=_pastes, error=error)
+    return render_template('add_paste.html', pastes=age(_pastes), error=error)
 
 @app.route('/login/')
 def loginPage():
@@ -134,9 +144,7 @@ def logout():
 def view_list():
     error = None
     _pastes = pastes.query.filter_by(unlisted=0).order_by(pastes.posted.desc()).limit(40).all()
-    for thing in _pastes:
-        thing.posted = pretty_age.get_age(thing.posted)
-    return render_template('paste_list.html', pastes=_pastes, error=error)
+    return render_template('paste_list.html', pastes=age(_pastes), error=error)
 
 @app.route('/view/<int:paste_id>/')
 def view_paste(paste_id):
@@ -152,18 +160,14 @@ def view_paste(paste_id):
         error = 'That language has no highlighting available! Oops! <a href="mailto://%(email)s">email</a> me and tell me to fix it!' % { 'email': app.config['EMAIL'] }
         highlighted = highlight.syntax(cur_paste.contents, 'none')
     recent_pastes = pastes.query.filter_by(unlisted=0).order_by(pastes.posted.desc()).limit(7).all()
-    for thing in recent_pastes:
-        thing.posted = pretty_age.get_age(thing.posted)
-    return render_template('view_paste.html', cur_paste=cur_paste, recent_pastes=recent_pastes, highlighted=highlighted, error=error)
+    return render_template('view_paste.html', cur_paste=age(cur_paste), recent_pastes=age(recent_pastes), highlighted=highlighted, error=error)
 
 @app.route('/view/all/')
 def view_all_pastes():
     if 'logged_in' not in session.keys() or session['logged_in'] != True:
         abort(404)
     all_pastes = pastes.query.order_by(pastes.posted.desc()).limit(40).all()
-    for paste in all_pastes:
-        paste.posted = pretty_age.get_age(paste.posted)
-    return render_template('paste_list.html', pastes=all_pastes)
+    return render_template('paste_list.html', pastes=age(all_pastes))
 
 
 @app.route('/unlisted/<int:paste_hash>/')
@@ -173,15 +177,12 @@ def view_unlisted_paste(paste_hash):
     cur_paste = pastes.query.filter_by(p_hash=paste_hash).first()
     if cur_paste == None:
         abort(404)
-    cur_paste.posted = pretty_age.get_age(cur_paste.posted)
     try: highlighted = highlight.syntax(cur_paste.contents, cur_paste.language)
     except:
         error = 'That language has no highlighting available! Oops! <a href="mailto://%(email)s">email</a> me and tell me to fix it!' % { 'email': app.config['EMAIL'] }
         highlighted = highlight.syntax(cur_paste.contents, 'none')
     recent_pastes = pastes.query.filter_by(unlisted=0).order_by(pastes.posted.desc()).limit(7).all()
-    for thing in recent_pastes:
-        thing.posted = pretty_age.get_age(thing.posted)
-    return render_template('view_paste.html', cur_paste=cur_paste, recent_pastes=recent_pastes, highlighted=highlighted, error=error)
+    return render_template('view_paste.html', cur_paste=age(cur_paste), recent_pastes=age(recent_pastes), highlighted=highlighted, error=error)
 
 @app.route('/api/')
 def api():
