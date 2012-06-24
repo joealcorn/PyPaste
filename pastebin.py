@@ -54,6 +54,16 @@ def delPaste(id):
     db.session.commit()
     return p
 
+def generatePasteHash():
+    ''' Generates a unique sequence to identify a paste,
+        used for unlisted pastes'''
+    while True:
+        p_hash = str(random.getrandbits(50))[:7]
+        otherPastes = pastes.query.filter_by(p_hash=p_hash).order_by(pastes.posted.desc()).all()
+        if otherPastes == []:
+            break
+    return p_hash
+
 @app.route('/add', methods=['POST', 'GET'])
 def add():
     r = request
@@ -62,7 +72,8 @@ def add():
     if r.form['contents'].strip() == '':
         flash('You need to paste some text')
         return redirect(url_for('index'))
-    p_hash = str(random.getrandbits(50))[:7]
+    p_hash = generatePasteHash()
+
     p = addPaste(r.form['title'], r.form['contents'], None, r.form['language'], r.form['unlisted'], p_hash)
 
     if r.form['unlisted'] == '1':
