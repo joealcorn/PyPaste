@@ -173,7 +173,7 @@ def api():
 
 # API
 
-@app.route('/api/add', methods=['POST'])
+@app.route('/api/add/', methods=['POST'])
 def api_add():
     r = request
     if r.form['contents'] == '':
