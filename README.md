@@ -8,8 +8,11 @@ Dependencies
 ===
 
 Flask
+
 Flask-SQLAlchemy
+
 Pygments
+
 
 Creating the database
 ===
