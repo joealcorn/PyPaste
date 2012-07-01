@@ -3,7 +3,7 @@
 {% block body %}
         <h2>api documentation</h2><br>
         <p2>To create a paste, send an HTTP POST request to <strong>{{url_for('api_add', _external=True)}}</strong> with <strong>title, contents, language</strong> and <strong>unlisted</strong> parameters</p>
-            </p>Language should be any of the choices available via the drop down menu on the submit paste page, and unlisted should be 1 or 0 for true or false respectively. An example is shown below; I highly recommend using <a href="http://docs.python-requests.org">requests</a> for this.
+            </p>Language should be any of the choices available via the drop down menu on the submit paste page, and unlisted should be 1 or 0 for true or false respectively. An example is shown below. (The example uses <a href="http://docs.python-requests.org">requests</a>; I highly recommend it if you're working in python)
         </p2>
 
 <!-- Python Highlighting -->
