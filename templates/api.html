@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% block head %}<link rel=stylesheet type=text/css href="{{ url_for('static', filename='highlight.css') }}">{% endblock %}
 {% block body %}
         <h2>api documentation</h2><br>
         <p2>To create a paste, send an HTTP POST request to <strong>{{url_for('api_add', _external=True)}}</strong> with <strong>title, contents, language</strong> and <strong>unlisted</strong> parameters</p>
