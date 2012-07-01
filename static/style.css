@@ -8,23 +8,32 @@ h3              { font-size: 1.2em; }
 p               { font-size: 1em; }
 p2              { font-size: 0.8em; }
 ul              { list-style-type:none; }
-table           { border-collapse:collapse;width:100%;}
-td              { padding-right:5px;padding-left:5px;background-color:#EEE;}
+table           { border-collapse:collapse;}
+
+td.linenos		{ padding-right:5px;padding-left:5px;background-color:#EEE;}
+td.code			{ padding-right:5px; padding-left:10px; background-color:#EEE; width:100%;}
+
+
+.paste-info		{ clear:both; border:1px solid #ccc; margin-top:5px; margin-bottom:5px; background-color:#FAFAFA; padding:7px; }
+.paste-content  { clear:both; border:1px solid #ccc; margin-top:5px; margin-bottom:5px; overflow:auto;}
+
+.paste-list		{ padding:7px; }
+.paste-list li	{ margin-bottom:10px;}
 
 
 .centre         { text-align:center; }
-.page           { margin: 2em auto; width: 900px; border: 5px solid #ccc; padding: 0.8em; background: white; overflow:auto;}
+.page           { margin: 2em auto; width: 900px; border: 5px solid #ccc; padding: 0.8em; background: white;}
 .metanav        { text-align: right; font-size: 0.8em; padding: 0.3em; margin-bottom: 1em; background: #fafafa; }
 .flash          { background: #CEE5F5; padding: 0.5em; border: 1px solid #AACBE2; }
 .error          { background: #F0D6D6; padding: 0.5em; }
 .footer-text    { font-size:0.7em; width: 35em; }
-.list_recent li { display:inline; float:left; padding-bottom:20px;padding-left:10px;padding-right:10px; }
-.recent         { float:left; }
-.textedit       { width:100%; font-family:monospace;}
-.text_area      { clear:both; font-family:monospace; background-color:#fafafa; border:1px solid #ccc; overflow:auto;}
+.recent         { float:left; padding:7px; width:884px;}
+.list_recent li { display:inline; float:left; padding-bottom:20px; padding-left:10px; padding-right:10px; }
+.textedit       { width:100%; font-family:monospace; resize:vertical;}
+.input-bordered { border:1px solid #ccc;}
+
 .time           { color:#757575 }
 .lang           { color:#757575 }
 .unlisted_title { color:#757575 }
 
 #unlistedtext   { display:none; }
-

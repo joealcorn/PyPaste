@@ -1,17 +1,8 @@
 {% extends "layout.html" %}
+{% block head %}<link rel=stylesheet type=text/css href="{{ url_for('static', filename='highlight.css') }}">{% endblock %}
 {% block body %}
 
-    <div class="recent">
-        <h3>Recent pastes</h3>
-        <ul class=list_recent>
-        {% for paste in recent_pastes %}
-            <li><p2><a title="{{ paste.title }}" href="{{ url_for('view_paste', paste_id=paste.id) }}">{{ paste.title|truncate(length=12, killwords=True, end='...') }}</a><br>{{ paste.posted }} ago</p2></li>
-        {% else %}
-            <li><p2>There's nothing here yet!<br><a href="{{ url_for('index') }}">Change that!</a></p2></li>
-        {% endfor %}
-        </ul>
-    </div>
-    <div class="text_area">
+    <div class="paste-info">
         <h2>{{ cur_paste.title }}</h2><p2>Language: {{ cur_paste.language }}<br> Pasted {{ cur_paste.posted }} ago</p2>
         {% if session.logged_in %}
             <form action="{{ url_for('delete') }}" method="post">
@@ -19,11 +10,9 @@
                 <input type="hidden" name="pid" value="{{ cur_paste.id }}">
             </form>
         {% endif %}
-        {% if highlighted %}
-            {{ highlighted|safe }}
-        {% else %}
-            <pre>{{ cur_paste.contents }}</pre>
-        {% endif %}
+    </div>
+    <div class="paste-content">
+        {{ highlighted|safe }}
     </div>
 
 

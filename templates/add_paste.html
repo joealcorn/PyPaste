@@ -11,12 +11,12 @@
         </ul>
     </div>
             <form action="{{ url_for('add') }}" method="post">
-                    <textarea class="textedit" name="contents" rows="15" placeholder="Paste contents" autofocus></textarea>
-                    <input type="text" name="title" maxlength="40" placeholder="Title (optional)">
+                    <textarea class="textedit input-bordered" name="contents" rows="15" placeholder="Paste contents" autofocus></textarea>
+                    <input type="text" class="input-bordered" name="title" maxlength="40" placeholder="Title (optional)">
                     <!--<input type="password" name="password" maxlength="30" placeholder="Password (optional)">-->
                     <input type="checkbox" id="unlisted" name="unlisted" value="1"/><p2>Unlisted</p2>
                     <input type="hidden" name="unlisted" value="0" />
-                    <select name="language">
+                    <select name="language" class="input-bordered">
                         <option value="text">Language</option>
                         <option value="text">Text</option>
                         <option value="c">C</option>
