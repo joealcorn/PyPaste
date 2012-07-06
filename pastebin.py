@@ -181,6 +181,8 @@ def view_unlisted_paste(paste_hash):
     cur_paste = pastes.query.filter_by(p_hash=paste_hash).first()
     if cur_paste == None:
         abort(404)
+    cur_paste.views = cur_paste.views + 1
+    db.session.commit()
     try: highlighted = highlight.syntax(cur_paste.contents, cur_paste.language)
     except:
         error = 'That language has no highlighting available! Oops! <a href="mailto://%(email)s">email</a> me and tell me to fix it!' % { 'email': app.config['EMAIL'] }
