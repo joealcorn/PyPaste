@@ -159,8 +159,7 @@ def view_paste(paste_id):
             (by sending a POST request and not using the form) it will alert them to it '''
         error = 'That language has no highlighting available! Oops! <a href="mailto://%(email)s">email</a> me and tell me to fix it!' % { 'email': app.config['EMAIL'] }
         highlighted = highlight.syntax(cur_paste.contents, 'none')
-    recent_pastes = pastes.query.filter_by(unlisted=0).order_by(pastes.posted.desc()).limit(7).all()
-    return render_template('view_paste.html', cur_paste=age(cur_paste), recent_pastes=age(recent_pastes), highlighted=highlighted, error=error)
+    return render_template('view_paste.html', cur_paste=age(cur_paste), highlighted=highlighted, error=error)
 
 @app.route('/view/all/')
 def view_all_pastes():
@@ -181,8 +180,7 @@ def view_unlisted_paste(paste_hash):
     except:
         error = 'That language has no highlighting available! Oops! <a href="mailto://%(email)s">email</a> me and tell me to fix it!' % { 'email': app.config['EMAIL'] }
         highlighted = highlight.syntax(cur_paste.contents, 'none')
-    recent_pastes = pastes.query.filter_by(unlisted=0).order_by(pastes.posted.desc()).limit(7).all()
-    return render_template('view_paste.html', cur_paste=age(cur_paste), recent_pastes=age(recent_pastes), highlighted=highlighted, error=error)
+    return render_template('view_paste.html', cur_paste=age(cur_paste), highlighted=highlighted, error=error)
 
 @app.route('/api/')
 def api():
