@@ -22,6 +22,7 @@ class pastes(db.Model):
     language = db.Column(db.String(40))
     unlisted = db.Column(db.Integer(16))
     p_hash = db.Column(db.String(6))
+    views = db.Column(db.Integer(16))
 
     def __init__(self, title, contents, password, language, unlisted, p_hash):
         self.posted = datetime.now()
@@ -31,6 +32,7 @@ class pastes(db.Model):
         self.language = language
         self.unlisted = unlisted
         self.p_hash = p_hash
+        self.views = 0
 
 class users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -153,6 +155,8 @@ def view_paste(paste_id):
     cur_paste = pastes.query.get(paste_id)
     if cur_paste == None or cur_paste.unlisted == 1:
         abort(404)
+    cur_paste.views = cur_paste.views + 1
+    db.session.commit()
     try: highlighted = highlight.syntax(cur_paste.contents, cur_paste.language)
     except:
         ''' In the case where the user was able to select a language which has no syntax highlighting configured
