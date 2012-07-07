@@ -224,7 +224,7 @@ def api():
 def api_add():
     r = request
     if r.form['contents'] == '':
-        return jsonify(success=False, error='No content')
+        return jsonify(success=False, error='No content'), 400
     p_hash = str(random.getrandbits(50))[:7]
     p = addPaste(r.form['title'], r.form['contents'], None, r.form['language'].lower(), r.form['unlisted'], p_hash)
     if r.form['unlisted'] == '1':
