@@ -3,7 +3,8 @@ import hashlib
 import random
 from collections import Iterable
 
-from flask import Flask, redirect, url_for, render_template, flash, request, abort, jsonify, session
+from flask import Flask, redirect, url_for, render_template, flash, request
+from flask import abort, jsonify, session, make_response
 from flask.ext.sqlalchemy import SQLAlchemy
 
 import highlight
@@ -163,6 +164,16 @@ def view_paste(paste_id):
         highlighted = highlight.syntax(cur_paste.contents, 'none')
     return render_template('view_paste.html', cur_paste=format(cur_paste), highlighted=highlighted, error=error)
 
+@app.route('/view/<int:paste_id>/raw/')
+def view_raw_paste(paste_id):
+    cur_paste = pastes.query.get(paste_id)
+    if cur_paste == None or cur_paste.unlisted == 1:
+        abort(404)
+    response = make_response(render_template('raw.html', cur_paste=cur_paste))
+    response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+    return response
+
+
 @app.route('/view/all/')
 def view_all_pastes():
     if 'logged_in' not in session.keys() or session['logged_in'] != True:
@@ -183,6 +194,15 @@ def view_unlisted_paste(paste_hash):
         error = 'That language has no highlighting available! Oops! <a href="mailto://%(email)s">email</a> me and tell me to fix it!' % { 'email': app.config['EMAIL'] }
         highlighted = highlight.syntax(cur_paste.contents, 'none')
     return render_template('view_paste.html', cur_paste=format(cur_paste), highlighted=highlighted, error=error)
+
+@app.route('/unlisted/<int:paste_hash>/raw/')
+def view_raw_unlisted_paste(paste_hash):
+    cur_paste = pastes.query.filter_by(p_hash=paste_hash).first()
+    if cur_paste == None:
+        abort(404)
+    response = make_response(render_template('raw.html', cur_paste=cur_paste))
+    response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+    return response
 
 @app.route('/api/')
 def api():
