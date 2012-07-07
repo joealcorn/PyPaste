@@ -49,9 +49,10 @@ def hashPassword(password):
     p.update(password + app.config['SECRET_KEY'])
     return p.hexdigest()
 
-def addPaste(title, contents, password, language, unlisted, p_hash):
+def addPaste(title, contents, password, language, unlisted):
     if title.strip() == '':
         title = "Untitled"
+    p_hash = generatePasteHash()
     p = pastes(title, contents, password, language, unlisted, p_hash)
     db.session.add(p)
     db.session.commit()
@@ -94,9 +95,8 @@ def add():
     if r.form['contents'].strip() == '':
         flash('You need to paste some text')
         return redirect(url_for('index'))
-    p_hash = generatePasteHash()
 
-    p = addPaste(r.form['title'], r.form['contents'], None, r.form['language'], r.form['unlisted'], p_hash)
+    p = addPaste(r.form['title'], r.form['contents'], None, r.form['language'], r.form['unlisted'])
 
     if r.form['unlisted'] == '1':
         flash('Unlisted paste created! It can only be accessed via this URL, so be careful who you share it with')
@@ -225,8 +225,7 @@ def api_add():
     r = request
     if r.form['contents'] == '':
         return jsonify(success=False, error='No content'), 400
-    p_hash = str(random.getrandbits(50))[:7]
-    p = addPaste(r.form['title'], r.form['contents'], None, r.form['language'].lower(), r.form['unlisted'], p_hash)
+    p = addPaste(r.form['title'], r.form['contents'], None, r.form['language'].lower(), r.form['unlisted'])
     if r.form['unlisted'] == '1':
         return jsonify(success=True, url=url_for('view_unlisted_paste', paste_hash=p.p_hash, _external=True))
     else:
