@@ -8,7 +8,7 @@
             <li><p1><a title="{{ paste.title }}" href="{% if paste.unlisted %} {{ url_for('view_unlisted_paste', paste_hash=paste.p_hash) }} {% else %}{{ url_for('view_paste', paste_id=paste.id) }}{% endif %}">{% if paste.unlisted == 1 %}<span class="unlisted_title">{% endif %}{{ paste.title|truncate(length=50, killwords=False, end='...') }}{% if paste.unlisted == 1 %}</span>{% endif %}</a></p1>
             <p2> {{ paste.contents|truncate(length=60, killwords=False, end='...') }} <br>
             Language: <span class="lang">{{ paste.language }}</span>
-            Age: <span class="time">{{ paste.posted }}</span></p2></li>
+            Age: <span class="time" title="{{ paste.posted }}">{{ paste.age }}</span></p2></li>
         {% else %}
             <li><p2>There's nothing here yet!<br><a href="{{ url_for('index') }}">Change that!</a></p2></li>
         {% endfor %}
