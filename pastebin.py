@@ -145,12 +145,22 @@ def logout():
 
 @app.route('/view/')
 def view_list():
+    ''' Lists all public pastes '''
     error = None
     _pastes = pastes.query.filter_by(unlisted=0).order_by(pastes.posted.desc()).limit(40).all()
     return render_template('paste_list.html', pastes=format(_pastes), error=error)
 
+@app.route('/view/all/')
+def view_all_pastes():
+    ''' Lists both listed and unlisted pastes, must be logged in '''
+    if 'logged_in' not in session.keys() or session['logged_in'] != True:
+        abort(404)
+    all_pastes = pastes.query.order_by(pastes.posted.desc()).limit(40).all()
+    return render_template('paste_list.html', pastes=format(all_pastes))
+
 @app.route('/view/<int:paste_id>/')
 def view_paste(paste_id):
+    ''' Viewing a specific paste '''
     error = None
     highlighted = None
     cur_paste = pastes.query.get(paste_id)
@@ -166,6 +176,7 @@ def view_paste(paste_id):
 
 @app.route('/view/<int:paste_id>/raw/')
 def view_raw_paste(paste_id):
+    ''' Raw version of a specific paste '''
     cur_paste = pastes.query.get(paste_id)
     if cur_paste == None or cur_paste.unlisted == 1:
         abort(404)
@@ -173,17 +184,9 @@ def view_raw_paste(paste_id):
     response.headers['Content-Type'] = 'text/plain; charset=utf-8'
     return response
 
-
-@app.route('/view/all/')
-def view_all_pastes():
-    if 'logged_in' not in session.keys() or session['logged_in'] != True:
-        abort(404)
-    all_pastes = pastes.query.order_by(pastes.posted.desc()).limit(40).all()
-    return render_template('paste_list.html', pastes=format(all_pastes))
-
-
 @app.route('/unlisted/<int:paste_hash>/')
 def view_unlisted_paste(paste_hash):
+    ''' Viewing a specific unlisted paste '''
     error = None
     highlighted = None
     cur_paste = pastes.query.filter_by(p_hash=paste_hash).first()
@@ -197,6 +200,7 @@ def view_unlisted_paste(paste_hash):
 
 @app.route('/unlisted/<int:paste_hash>/raw/')
 def view_raw_unlisted_paste(paste_hash):
+    ''' Raw version of a specific unlisted paste '''
     cur_paste = pastes.query.filter_by(p_hash=paste_hash).first()
     if cur_paste == None:
         abort(404)
@@ -204,11 +208,11 @@ def view_raw_unlisted_paste(paste_hash):
     response.headers['Content-Type'] = 'text/plain; charset=utf-8'
     return response
 
+# API
+
 @app.route('/api/')
 def api():
     return render_template('api.html')
-
-# API
 
 @app.route('/api/add', methods=['POST'])
 def api_add():
