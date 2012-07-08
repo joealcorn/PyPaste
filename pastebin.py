@@ -181,7 +181,7 @@ def view_raw_paste(paste_id):
     cur_paste = pastes.query.get(paste_id)
     if cur_paste == None or cur_paste.unlisted == 1:
         abort(404)
-    response = make_response(render_template('raw.html', cur_paste=cur_paste))
+    response = make_response(cur_paste.contents)
     response.mimetype = 'text/plain'
     return response
 
@@ -207,7 +207,7 @@ def view_raw_unlisted_paste(paste_hash):
     cur_paste = pastes.query.filter_by(p_hash=paste_hash).first()
     if cur_paste == None:
         abort(404)
-    response = make_response(render_template('raw.html', cur_paste=cur_paste))
+    response = make_response(cur_paste.contents)
     response.mimetype = 'text/plain'
     return response
 
