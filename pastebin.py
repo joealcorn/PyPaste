@@ -62,7 +62,6 @@ def delPaste(id):
     p = pastes.query.get(id)
     db.session.delete(p)
     db.session.commit()
-    return p
 
 def generatePasteHash():
     ''' Generates a unique sequence to identify a paste,
