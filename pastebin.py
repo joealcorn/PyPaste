@@ -184,7 +184,7 @@ def view_raw_paste(paste_id):
     if cur_paste == None or cur_paste.unlisted == 1:
         abort(404)
     response = make_response(render_template('raw.html', cur_paste=cur_paste))
-    response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+    response.mimetype = 'text/plain'
     return response
 
 @app.route('/unlisted/<int:paste_hash>/')
@@ -210,7 +210,7 @@ def view_raw_unlisted_paste(paste_hash):
     if cur_paste == None:
         abort(404)
     response = make_response(render_template('raw.html', cur_paste=cur_paste))
-    response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+    response.mimetype = 'text/plain'
     return response
 
 # API
