@@ -86,11 +86,9 @@ def format(pastes):
             pastes.age = pretty_age.get_age(pastes.posted)
     return pastes
 
-@app.route('/add', methods=['POST', 'GET'])
+@app.route('/add', methods=['POST'])
 def add():
     r = request
-    if r.method == 'GET':
-        return redirect(url_for('index'))
     if r.form['contents'].strip() == '':
         flash('You need to paste some text')
         return redirect(url_for('index'))
