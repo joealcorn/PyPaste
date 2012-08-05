@@ -56,8 +56,11 @@ def add():
     if r.form['contents'].strip() == '':
         flash('You need to paste some text')
         return redirect(url_for('index'))
+    if r.form['password'] == '':
+        password = None
+    else: password = r.form['password']
 
-    p = addPaste(r.form['title'], r.form['contents'], None, r.form['language'], r.form['unlisted'])
+    p = addPaste(r.form['title'], r.form['contents'], password, r.form['language'], r.form['unlisted'])
 
     if r.form['unlisted'] == '1':
         flash('Unlisted paste created! It can only be accessed via this URL, so be careful who you share it with')
@@ -76,22 +79,34 @@ def delete():
 
 
 @app.route('/authenticate', methods=['POST'])
-def login():
+def authenticate():
     r = request
-    u = users.query.filter_by(username=r.form['username']).first()
-    if u == None:
-        flash('User not found')
-        return redirect(url_for('loginPage'))
+    pid = int(r.form['pid'])
+    unlisted = bool(int(r.form['unlisted']))
 
-    password = hashPassword(r.form['password'], u.salt)
-    if u.password != password:
-        flash('Incorrect username/password combo')
-        return redirect(url_for('loginPage'))
+    if unlisted:
+        p = pastes.query.filter_by(p_hash=pid).first()
     else:
-        session['logged_in'] = True
-        session['username'] = u.username
-        flash('Successfully logged in')
-        return redirect(url_for('index'))
+        p = pastes.query.filter_by(id=pid).first()
+
+    if p == None:
+        abort(400)
+
+    if r.form['password'] != p.password:
+        flash('Incorrect password')
+    elif r.form['password'] == p.password:
+        try:
+            session['allowed_pastes'].append(p.id)
+        except KeyError:
+            session['allowed_pastes'] = [pid]
+        session.modified = True
+    
+    if unlisted:
+        return redirect(url_for('view_unlisted_paste', paste_hash=pid))
+    else:
+        return redirect(url_for('view_paste', paste_id=pid))
+
+
 
 # Pages
 
@@ -138,9 +153,11 @@ def view_raw_paste(paste_id):
     cur_paste = pastes.query.get(paste_id)
     if cur_paste == None or cur_paste.unlisted == 1:
         abort(404)
-    response = make_response(cur_paste.contents)
-    response.mimetype = 'text/plain'
-    return response
+    if cur_paste.password == None and session.has_key('allowed_pastes') and cur_paste.id in session['allowed_pastes']:
+        response = make_response(cur_paste.contents)
+        response.mimetype = 'text/plain'
+        return response
+    else: return redirect(url_for('view_paste', paste_id=paste_id))
 
 @app.route('/unlisted/<int:paste_hash>/')
 def view_unlisted_paste(paste_hash):
@@ -150,7 +167,6 @@ def view_unlisted_paste(paste_hash):
     cur_paste = pastes.query.filter_by(p_hash=paste_hash).first()
     if cur_paste == None:
         abort(404)
-    db.session.commit()
     try: highlighted = highlight.syntax(cur_paste.contents, cur_paste.language)
     except:
         error = 'That language has no highlighting available! Oops! <a href="mailto://%(email)s">email</a> me and tell me to fix it!' % { 'email': app.config['EMAIL'] }
@@ -163,13 +179,32 @@ def view_raw_unlisted_paste(paste_hash):
     cur_paste = pastes.query.filter_by(p_hash=paste_hash).first()
     if cur_paste == None:
         abort(404)
-    response = make_response(cur_paste.contents)
-    response.mimetype = 'text/plain'
-    return response
+    if cur_paste.password == None and session.has_key('allowed_pastes') and cur_paste.id in session['allowed_pastes']:
+        response = make_response(cur_paste.contents)
+        response.mimetype = 'text/plain'
+        return response
+    else: return redirect(url_for('view_unlisted_paste', paste_hash=paste_hash))
 
-@app.route('/login/')
-def loginPage():
-    return render_template('login.html')
+@app.route('/login/', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+    elif request.method == 'POST':
+        r = request
+        u = users.query.filter_by(username=r.form['username']).first()
+        if u == None:
+            flash('User not found')
+            return redirect(url_for('login'))
+
+        password = hashPassword(r.form['password'], u.salt)
+        if u.password != password:
+            flash('Incorrect username/password combo')
+            return redirect(url_for('login'))
+        else:
+            session['logged_in'] = True
+            session['username'] = u.username
+            flash('Successfully logged in')
+            return redirect(url_for('index'))
 
 @app.route('/logout/')
 def logout():

@@ -12,8 +12,8 @@
     </div>
             <form action="{{ url_for('add') }}" method="post">
                     <textarea class="textedit input-bordered" name="contents" rows="15" placeholder="Paste contents" autofocus></textarea>
-                    <input type="text" class="input-bordered" name="title" maxlength="40" placeholder="Title (optional)">
-                    <!--<input type="password" name="password" maxlength="30" placeholder="Password (optional)">-->
+                    <input type="text" class="input-bordered" name="title" maxlength="40" placeholder="Title (optional)" autocomplete="off">
+                    <input type="password" class="input-bordered" name="password" maxlength="30" placeholder="Password (optional)" autocomplete="off">
                     <label><input type="checkbox" id="unlisted" name="unlisted" value="1"/><p2>Unlisted</p2></label>
                     <input type="hidden" name="unlisted" value="0" />
                     <select name="language" class="input-bordered">

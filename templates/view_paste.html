@@ -1,9 +1,23 @@
 {% extends "layout.html" %}
 {% block head %}<link rel=stylesheet type=text/css href="{{ url_for('static', filename='highlight.css') }}">{% endblock %}
 {% block body %}
+    {% if cur_paste.password != None and cur_paste.id not in session.allowed_pastes %}
+        <div class="paste-info">
+            <h2 class="centre">This paste is protected</h2>
+            <form action="{{ url_for('authenticate') }}" method="post" class="centre">
+                <input type="password" name="password" class="input-bordered">
+                <input type="submit" value="Submit">
+                <input type="hidden" name="pid" value="{% if cur_paste.unlisted %}{{ cur_paste.p_hash }}{% else %}{{ cur_paste.id }}{% endif %}">
+                <input type="hidden" name="unlisted" value="{% if cur_paste.unlisted %}1{% else %}0{% endif %}">
+            </form>
+        </div>
 
+    {% else %}
     <div class="paste-info">
-        <h2>{{ cur_paste.title }}</h2><p2>Language: {{ cur_paste.language }}<br>Age: <span title="{{ cur_paste.posted }}">{{ cur_paste.age }}</span>
+        {% if cur_paste.password != None %}<div class="locked right" title="Password protected"></div>{% endif %}
+        <h2 id="paste-info-title">{{ cur_paste.title }}</h2>
+        <p2>Language: {{ cur_paste.language }}
+        <br>Age: <span title="{{ cur_paste.posted }}">{{ cur_paste.age }}</span>
         <br><a href="raw/">View raw</a></p2>
         {% if session.logged_in %}
             <form action="{{ url_for('delete') }}" method="post">
@@ -16,5 +30,6 @@
         {{ highlighted|safe }}
     </div>
 
+    {% endif %}
 
 {% endblock %}

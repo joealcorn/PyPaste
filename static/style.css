@@ -17,11 +17,17 @@ td.code         { padding-right:5px; padding-left:10px; background-color:#EEE; w
 .paste-info     { clear:both; border:1px solid #ccc; margin-top:5px; margin-bottom:5px; background-color:#FAFAFA; padding:7px; }
 .paste-content  { clear:both; border:1px solid #ccc; margin-top:5px; margin-bottom:5px; overflow:auto;}
 
+#paste-info-title { width:70%;}
+
 .paste-list     { padding:7px; }
 .paste-list li  { margin-bottom:10px;}
 
 
+
 .centre         { text-align:center; }
+.right          { float:right;}
+.left           { float:left;}
+
 .page           { margin: 2em auto; width: 900px; border: 5px solid #ccc; padding: 0.8em; background: white;}
 .metanav        { text-align: right; font-size: 0.8em; padding: 0.3em; margin-bottom: 1em; background: #fafafa; }
 .flash          { background: #CEE5F5; padding: 0.5em; border: 1px solid #AACBE2; }
@@ -37,3 +43,6 @@ td.code         { padding-right:5px; padding-left:10px; background-color:#EEE; w
 .unlisted_title { color:#757575 }
 
 #unlistedtext   { display:none; }
+
+.locked         { background: url(img/locked.png) no-repeat; width:16px; height:16px; display:inline-block;}
+.locked-list    { list-style-image:url(img/locked.png)}
