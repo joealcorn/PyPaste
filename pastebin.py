@@ -228,11 +228,14 @@ def api_add():
     r = request
     if r.form['contents'] == '':
         return jsonify(success=False, error='No content'), 400
-    p = addPaste(r.form['title'], r.form['contents'], None, r.form['language'].lower(), r.form['unlisted'])
+    if r.form['password'] == '':
+        password = None
+    else: password = r.form['password']
+    p = addPaste(r.form['title'], r.form['contents'], password, r.form['language'].lower(), r.form['unlisted'])
     if r.form['unlisted'] == '1':
-        return jsonify(success=True, url=url_for('view_unlisted_paste', paste_hash=p.p_hash, _external=True))
+        return jsonify(success=True, url=url_for('view_unlisted_paste', password=password, paste_hash=p.p_hash, _external=True))
     else:
-        return jsonify(success=True, url=url_for('view_paste', paste_id=p.id, _external=True))
+        return jsonify(success=True, url=url_for('view_paste', paste_id=p.id, password=password, _external=True))
 
 
 # Errors
