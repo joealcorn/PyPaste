@@ -153,9 +153,11 @@ def view_raw_paste(paste_id):
     cur_paste = pastes.query.get(paste_id)
     if cur_paste == None or cur_paste.unlisted == 1:
         abort(404)
-    if cur_paste.password == None and session.has_key('allowed_pastes') and cur_paste.id in session['allowed_pastes']:
-        response = make_response(cur_paste.contents)
-        response.mimetype = 'text/plain'
+    response = make_response(cur_paste.contents)
+    response.mimetype = 'text/plain'
+    if cur_paste.password != None and session.has_key('allowed_pastes') and cur_paste.id in session['allowed_pastes']:
+        return response
+    elif cur_paste.password == None:
         return response
     else: return redirect(url_for('view_paste', paste_id=paste_id))
 
@@ -179,9 +181,11 @@ def view_raw_unlisted_paste(paste_hash):
     cur_paste = pastes.query.filter_by(p_hash=paste_hash).first()
     if cur_paste == None:
         abort(404)
-    if cur_paste.password == None and session.has_key('allowed_pastes') and cur_paste.id in session['allowed_pastes']:
-        response = make_response(cur_paste.contents)
-        response.mimetype = 'text/plain'
+    response = make_response(cur_paste.contents)
+    response.mimetype = 'text/plain'
+    if cur_paste.password != None and session.has_key('allowed_pastes') and cur_paste.id in session['allowed_pastes']:
+        return response
+    elif cur_paste.password == None:
         return response
     else: return redirect(url_for('view_unlisted_paste', paste_hash=paste_hash))
 
