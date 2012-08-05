@@ -4,7 +4,7 @@
 
     <div class="paste-info">
         <h2>{{ cur_paste.title }}</h2><p2>Language: {{ cur_paste.language }}<br>Age: <span title="{{ cur_paste.posted }}">{{ cur_paste.age }}</span>
-        <br>Views: {{ cur_paste.views }}<br><a href="raw/">View raw</a></p2>
+        <br><a href="raw/">View raw</a></p2>
         {% if session.logged_in %}
             <form action="{{ url_for('delete') }}" method="post">
                 <input type="submit" class="delete" value="Delete paste">
