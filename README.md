@@ -1,21 +1,16 @@
-PyPaste
-==========
+#PyPaste
 
 Simple pastebin using Flask, Flask-SQLAlchemy and Pygments
 
 
-Dependencies
-===
+###Dependencies
 
-Flask
-
-Flask-SQLAlchemy
-
-Pygments
+* Flask
+* Flask-SQLAlchemy
+* Pygments
 
 
-Creating the database
-===
+###Creating the database
 
 To create the initial database, run:
 
@@ -23,4 +18,3 @@ To create the initial database, run:
 from pastebin import db
 db.create_all()
 ```
-
