@@ -39,6 +39,7 @@
                         <option value="vbnet">VB.NET</option>
                     </select>
                     <input type="submit" value="Paste!">
+                    <input type="text" class="honeypot" style="width:1px;height:1px;" name="do-not-fill-this-in" maxlength="40" placeholder="Leave this field blank!">
             </form>
             <div id="unlistedtext" class="flash">
             This paste will be marked as unlisted; only visible to people you give the URL to.
@@ -47,8 +48,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script>
     $(document).ready(function(){
+        $('.honeypot').hide();
         $("#unlisted").click(function(){
-
             if ($("#unlisted").is(":checked"))
             {
                 $("#unlistedtext").slideDown("fast");
