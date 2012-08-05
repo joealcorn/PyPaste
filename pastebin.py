@@ -2,6 +2,10 @@ from datetime import datetime
 import hashlib
 import random
 from collections import Iterable
+from os import urandom
+from optparse import OptionParser
+import getpass
+
 
 from flask import Flask, redirect, url_for, render_template, flash, request
 from flask import abort, jsonify, session, make_response
@@ -37,52 +41,12 @@ class users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False, unique=True)
     password = db.Column(db.String(255), nullable=False)
+    salt = db.Column(db.String(255), nullable=False)
 
-    def __init__(self, username, password):
+    def __init__(self, username, password, salt):
         self.username = username
         self.password = password
-
-def hashPassword(password):
-    p = hashlib.new('sha256')
-    p.update(password + app.config['SECRET_KEY'])
-    return p.hexdigest()
-
-def addPaste(title, contents, password, language, unlisted):
-    if title.strip() == '':
-        title = "Untitled"
-    p_hash = generatePasteHash()
-    p = pastes(title, contents, password, language, unlisted, p_hash)
-    db.session.add(p)
-    db.session.commit()
-    return p
-
-def delPaste(id):
-    p = pastes.query.get(id)
-    db.session.delete(p)
-    db.session.commit()
-
-def generatePasteHash():
-    ''' Generates a unique sequence to identify a paste,
-        used for unlisted pastes'''
-    while True:
-        p_hash = str(random.getrandbits(50))[:7]
-        otherPastes = pastes.query.filter_by(p_hash=p_hash).order_by(pastes.posted.desc()).all()
-        if otherPastes == []:
-            break
-    return p_hash
-
-def format(pastes):
-    ''' Formats pastes '''
-
-    # Get age from date
-    if isinstance(pastes, Iterable):
-        for paste in pastes:
-            if not isinstance(paste.posted, str):
-                paste.age = pretty_age.get_age(paste.posted)
-    else:
-        if not isinstance(pastes.posted, str):
-            pastes.age = pretty_age.get_age(pastes.posted)
-    return pastes
+        self.salt = salt
 
 @app.route('/add', methods=['POST'])
 def add():
@@ -112,13 +76,18 @@ def delete():
 @app.route('/authenticate', methods=['POST'])
 def login():
     r = request
-    password = hashPassword(r.form['password'])
     u = users.query.filter_by(username=r.form['username']).first()
-    if u == None or u.password != password:
-        flash('Login failed')
+    if u == None:
+        flash('User not found')
+        return redirect(url_for('loginPage'))
+
+    password = hashPassword(r.form['password'], u.salt)
+    if u.password != password:
+        flash('Incorrect username/password combo')
         return redirect(url_for('loginPage'))
     else:
         session['logged_in'] = True
+        session['username'] = u.username
         flash('Successfully logged in')
         return redirect(url_for('index'))
 
@@ -129,16 +98,6 @@ def index():
     error = None
     _pastes = pastes.query.filter_by(unlisted=0).order_by(pastes.posted.desc()).limit(7).all()
     return render_template('add_paste.html', pastes=format(_pastes), error=error)
-
-@app.route('/login/')
-def loginPage():
-    return render_template('login.html')
-
-@app.route('/logout/')
-def logout():
-    session.pop('logged_in', None)
-    flash('You were logged out')
-    return redirect(url_for('index'))
 
 @app.route('/view/')
 def view_list():
@@ -206,6 +165,17 @@ def view_raw_unlisted_paste(paste_hash):
     response.mimetype = 'text/plain'
     return response
 
+@app.route('/login/')
+def loginPage():
+    return render_template('login.html')
+
+@app.route('/logout/')
+def logout():
+    session.pop('logged_in', None)
+    session.pop('username', None)
+    flash('You were logged out')
+    return redirect(url_for('index'))
+
 # API
 
 @app.route('/api/')
@@ -231,5 +201,67 @@ def error_404(error):
     return render_template('404.html'), 404
 
 
+# Non-front facing thingies
+
+def format(pastes):
+    ''' Formats pastes '''
+    # Get age from date
+    if isinstance(pastes, Iterable):
+        for paste in pastes:
+            if not isinstance(paste.posted, str):
+                paste.age = pretty_age.get_age(paste.posted)
+    else:
+        if not isinstance(pastes.posted, str):
+            pastes.age = pretty_age.get_age(pastes.posted)
+    return pastes
+
+def addPaste(title, contents, password, language, unlisted):
+    if title.strip() == '':
+        title = "Untitled"
+    p_hash = generatePasteHash()
+    p = pastes(title, contents, password, language, unlisted, p_hash)
+    db.session.add(p)
+    db.session.commit()
+    return p
+
+def delPaste(id):
+    p = pastes.query.get(id)
+    db.session.delete(p)
+    db.session.commit()
+
+def addUser(username, password, salt):
+    u = users(username, password, salt)
+    db.session.add(u)
+    db.session.commit()
+    print username + ' added'
+
+def generatePasteHash():
+    ''' Generates a unique sequence to identify a paste,
+        used for unlisted pastes'''
+    while True:
+        p_hash = str(random.getrandbits(50))[:7]
+        otherPastes = pastes.query.filter_by(p_hash=p_hash).order_by(pastes.posted.desc()).all()
+        if otherPastes == []:
+            break
+    return p_hash
+
+def hashPassword(password, salt):
+    p = hashlib.new('sha256')
+    p.update(password + salt)
+    return p.hexdigest()
+
+def newUser(username):
+    salt = urandom(60).encode('hex')
+    password = hashPassword(getpass.getpass(), salt)
+    addUser(username, password, salt)
+
+
 if __name__ == '__main__':
-    app.run()
+    parser = OptionParser()
+    parser.add_option('-a', help='Add an admin account', action="store", type="string", dest="username")
+    (options, args) = parser.parse_args()
+
+    if options.username != None:
+        newUser(options.username)
+    else:
+        app.run()
