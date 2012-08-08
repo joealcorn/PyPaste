@@ -5,6 +5,8 @@ from collections import Iterable
 from os import urandom
 from optparse import OptionParser
 import getpass
+import logging
+import time
 
 
 from flask import Flask, redirect, url_for, render_template, flash, request
@@ -17,6 +19,9 @@ import pretty_age
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 db = SQLAlchemy(app)
+logging.basicConfig(filename=app.config['LOG_PATH'], format='%(asctime)s [%(levelname)s] %(message)s',
+                    datefmt='%Y/%m/%d %H:%M', level=logging.INFO)
+
 
 class pastes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -52,6 +57,7 @@ class users(db.Model):
 def add():
     r = request
     if r.form['do-not-fill-this-in'] != '':
+        logging.info('Antispam caught user with IP %s, UA %s. Message: %s' % (r.remote_addr, r.user_agent, r.form['contents']))
         return redirect(url_for('index'))
     if r.form['contents'].strip() == '':
         flash('You need to paste some text')

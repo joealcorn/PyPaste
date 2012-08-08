@@ -2,3 +2,4 @@
 *.*~
 *.db
 config.py
+*.log
