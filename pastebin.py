@@ -19,8 +19,9 @@ import pretty_age
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 db = SQLAlchemy(app)
-logging.basicConfig(filename=app.config['LOG_PATH'], format='%(asctime)s [%(levelname)s] %(message)s',
-                    datefmt='%Y/%m/%d %H:%M', level=logging.INFO)
+if not app.config['DEBUG']:
+    logging.basicConfig(filename=app.config['LOG_PATH'], format='%(asctime)s [%(levelname)s] %(message)s',
+                        datefmt='%Y/%m/%d %H:%M', level=logging.INFO)
 
 
 class pastes(db.Model):
@@ -28,15 +29,17 @@ class pastes(db.Model):
     posted = db.Column(db.DateTime)
     title = db.Column(db.String(50))
     contents = db.Column(db.Text)
+    highlighted = db.Column(db.Text)
     password = db.Column(db.String(20))
     language = db.Column(db.String(40))
     unlisted = db.Column(db.Integer(16))
     p_hash = db.Column(db.String(6))
 
-    def __init__(self, title, contents, password, language, unlisted, p_hash):
+    def __init__(self, title, contents, highlighted, password, language, unlisted, p_hash):
         self.posted = datetime.now()
         self.title = title
         self.contents = contents
+        self.highlighted = highlighted
         self.password = password
         self.language = language
         self.unlisted = unlisted
@@ -140,18 +143,10 @@ def view_all_pastes():
 @app.route('/view/<int:paste_id>/')
 def view_paste(paste_id):
     ''' Viewing a specific paste '''
-    error = None
-    highlighted = None
     cur_paste = pastes.query.get(paste_id)
     if cur_paste == None or cur_paste.unlisted == 1:
         abort(404)
-    try: highlighted = highlight.syntax(cur_paste.contents, cur_paste.language)
-    except:
-        ''' In the case where the user was able to select a language which has no syntax highlighting configured
-            (by sending a POST request and not using the form) it will alert them to it '''
-        error = 'That language has no highlighting available! Oops! <a href="mailto://%(email)s">email</a> me and tell me to fix it!' % { 'email': app.config['EMAIL'] }
-        highlighted = highlight.syntax(cur_paste.contents, 'none')
-    return render_template('view_paste.html', cur_paste=format(cur_paste), highlighted=highlighted, error=error)
+    return render_template('view_paste.html', cur_paste=format(cur_paste))
 
 @app.route('/view/<int:paste_id>/raw/')
 def view_raw_paste(paste_id):
@@ -170,16 +165,10 @@ def view_raw_paste(paste_id):
 @app.route('/unlisted/<int:paste_hash>/')
 def view_unlisted_paste(paste_hash):
     ''' Viewing a specific unlisted paste '''
-    error = None
-    highlighted = None
     cur_paste = pastes.query.filter_by(p_hash=paste_hash).first()
     if cur_paste == None:
         abort(404)
-    try: highlighted = highlight.syntax(cur_paste.contents, cur_paste.language)
-    except:
-        error = 'That language has no highlighting available! Oops! <a href="mailto://%(email)s">email</a> me and tell me to fix it!' % { 'email': app.config['EMAIL'] }
-        highlighted = highlight.syntax(cur_paste.contents, 'none')
-    return render_template('view_paste.html', cur_paste=format(cur_paste), highlighted=highlighted, error=error)
+    return render_template('view_paste.html', cur_paste=format(cur_paste))
 
 @app.route('/unlisted/<int:paste_hash>/raw/')
 def view_raw_unlisted_paste(paste_hash):
@@ -268,8 +257,9 @@ def format(pastes):
 def addPaste(title, contents, password, language, unlisted):
     if title.strip() == '':
         title = "Untitled"
+    highlighted = highlight.syntax(contents, language)
     p_hash = generatePasteHash()
-    p = pastes(title, contents, password, language, unlisted, p_hash)
+    p = pastes(title, contents, highlighted, password, language, unlisted, p_hash)
     db.session.add(p)
     db.session.commit()
     return p

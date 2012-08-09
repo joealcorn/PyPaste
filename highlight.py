@@ -25,6 +25,9 @@ languages = {
                 'vbnet': VbNetLexer()
             }
 def syntax(code, language):
-    lang = languages[language]
+    try:
+        lang = languages[language]
+    except KeyError:
+        lang = languages['text']
     return highlight(code, lang, formatter)
 
