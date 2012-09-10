@@ -2,7 +2,13 @@
 {% block head %}<link rel=stylesheet type=text/css href="{{ url_for('static', filename='highlight.css') }}">{% endblock %}
 {% block body %}
         <h2>api documentation</h2><br>
-        <p2>To create a paste, send an HTTP POST request to <strong>{{url_for('api_add', _external=True)}}</strong> with <strong>title, contents, language</strong> and <strong>unlisted</strong> parameters</p>
+        <p2>To create a paste, send an HTTP POST request to <strong>{{url_for('api_add', _external=True)}}</strong> with <strong>contents</strong> postdata. The following options are also available, but are completely optional:
+            <ul>
+                <li>title</li>
+                <li>password</li>
+                <li>unlisted (1 or 0)</li>
+                <li>language</li>
+            </ul></p>
             </p>Language should be any of the choices available via the drop down menu on the submit paste page, and unlisted should be 1 or 0 for true or false respectively. An example is shown below. (The example uses <a href="http://docs.python-requests.org">requests</a>; I highly recommend it if you're working in python)
         </p2>
 
@@ -11,10 +17,9 @@
 
 <span class="k">def</span> <span class="nf">addPaste</span><span class="p">():</span>
     <span class="n">paste</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;title&#39;</span><span class="p">:</span> <span class="s">&#39;Example title&#39;</span><span class="p">,</span>
-             <span class="s">&#39;contents&#39;</span><span class="p">:</span> <span class="s">&#39;The contents of the paste would go here!&#39;</span><span class="p">,</span>
-             <span class="s">&#39;language&#39;</span><span class="p">:</span> <span class="s">&#39;text&#39;</span><span class="p">,</span>
-             <span class="s">&#39;unlisted&#39;</span><span class="p">:</span> <span class="mi">0</span> <span class="p">}</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;{{url_for('api_add', _external=True)}}&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">paste</span><span class="p">)</span>
+             <span class="s">&#39;contents&#39;</span><span class="p">:</span> <span class="s">&#39;print &quot;This is an example paste!&quot;&#39;</span><span class="p">,</span>
+             <span class="s">&#39;language&#39;</span><span class="p">:</span> <span class="s">&#39;python&#39;</span><span class="p">}</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s">&#39;{{ url_for('api_add', _external=True) }}&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">paste</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span>
 </pre></div>
@@ -23,9 +28,24 @@
         <br><p2>If all goes well, you should get a json response similar to the following:</p2>
 
 <!-- JSON Highlighting -->
+<!-- Success -->
 <div class="highlight paste-content"><pre><span class="p">{</span>
-  <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;{{url_for('index', _external=True)}}view/5&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;{{ url_for('view_paste', paste_id=12, _external=True) }}&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;password&quot;</span><span class="p">:</span> <span class="kc">null</span><span class="p">,</span>
   <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">true</span>
+<span class="p">}</span>
+</pre></div>
+
+        <br><p2>If an error occurs, something similar to this will be returned:</p2>
+
+<!-- Error-->
+<div class="highlight paste-content"><pre><span class="p">{</span>
+  <span class="nt">&quot;success&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+  <span class="nt">&quot;error&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s2">&quot;No contents specified&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Unsupported language&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Invalid value: (unlisted: &#39;wrong&#39;)&quot;</span>
+  <span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
 

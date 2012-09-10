@@ -19,9 +19,8 @@ import pretty_age
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 db = SQLAlchemy(app)
-if not app.config['DEBUG']:
-    logging.basicConfig(filename=app.config['LOG_PATH'], format='%(asctime)s [%(levelname)s] %(message)s',
-                        datefmt='%Y/%m/%d %H:%M', level=logging.INFO)
+logging.basicConfig(filename=app.config['LOG_PATH'], format='%(asctime)s [%(levelname)s] %(message)s',
+                    datefmt='%Y/%m/%d %H:%M', level=logging.INFO)
 
 
 class pastes(db.Model):
@@ -83,6 +82,7 @@ def delete():
         abort(401)
     r = request
     delPaste(r.form['pid'])
+    logging.info('%s deleted paste with ID %s' % (session['username'], r.form['pid']))
     flash('Paste with ID #%s has been deleted' % r.form['pid'])
     return redirect(url_for('view_all_pastes'))
 
@@ -186,17 +186,22 @@ def view_raw_unlisted_paste(paste_hash):
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
+    def logAttempt():
+            logging.info('%s attempted to login as user %s' % (r.remote_addr, r.form['username']))
+
     if request.method == 'GET':
         return render_template('login.html')
     elif request.method == 'POST':
         r = request
         u = users.query.filter_by(username=r.form['username']).first()
         if u == None:
+            logAttempt()
             flash('User not found')
             return redirect(url_for('login'))
 
         password = hashPassword(r.form['password'], u.salt)
         if u.password != password:
+            logAttempt()
             flash('Incorrect username/password combo')
             return redirect(url_for('login'))
         else:
@@ -221,16 +226,31 @@ def api():
 @app.route('/api/add', methods=['POST'])
 def api_add():
     r = request
-    if r.form['contents'] == '':
-        return jsonify(success=False, error='No content'), 400
-    if r.form['password'] == '':
-        password = None
-    else: password = r.form['password']
-    p = addPaste(r.form['title'], r.form['contents'], password, r.form['language'].lower(), r.form['unlisted'])
-    if r.form['unlisted'] == '1':
-        return jsonify(success=True, url=url_for('view_unlisted_paste', password=password, paste_hash=p.p_hash, _external=True))
+    error = []
+    contents = r.form.get('contents', '')
+    title = r.form.get('title', 'Untitled')
+    password = r.form.get('password')
+    language = r.form.get('language', 'text')
+    unlisted = r.form.get('unlisted', 0)
+
+    if contents.strip() is '':
+        error.append('No contents specified')
+    if language.lower().strip() not in highlight.languages.keys():
+        error.append('Unsupported language')
+    try:
+        unlisted = int(unlisted)
+    except ValueError:
+        error.append('Invalid value: (unlisted: \'{}\')'.format(unlisted))
+
+    if len(error) != 0:
+        return jsonify(success=False, error=error)
+
+    p = addPaste(title, contents, password, language.lower(), unlisted)
+
+    if unlisted == 0:
+        return jsonify(success=True, password=password, url=url_for('view_paste', paste_id=p.id, _external=True))
     else:
-        return jsonify(success=True, url=url_for('view_paste', paste_id=p.id, password=password, _external=True))
+        return jsonify(success=True, password=password, url=url_for('view_unlisted_paste', paste_hash=p.p_hash, _external=True))
 
 
 # Errors
