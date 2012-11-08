@@ -20,14 +20,16 @@ languages = {
                 'perl': PerlLexer(),
                 'python': PythonLexer(),
                 'python3': Python3Lexer(),
+                'pytraceback': PythonTracebackLexer(),
                 'ruby': RubyLexer(),
                 'sql': SqlLexer(),
                 'vbnet': VbNetLexer()
             }
+
+
 def syntax(code, language):
     try:
         lang = languages[language]
     except KeyError:
         lang = languages['text']
     return highlight(code, lang, formatter)
-
