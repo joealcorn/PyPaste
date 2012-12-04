@@ -162,7 +162,7 @@ def view_raw_paste(paste_id):
         return response
     else: return redirect(url_for('view_paste', paste_id=paste_id))
 
-@app.route('/unlisted/<int:paste_hash>/')
+@app.route('/unlisted/<paste_hash>/')
 def view_unlisted_paste(paste_hash):
     ''' Viewing a specific unlisted paste '''
     cur_paste = pastes.query.filter_by(p_hash=paste_hash).first()
@@ -170,7 +170,7 @@ def view_unlisted_paste(paste_hash):
         abort(404)
     return render_template('view_paste.html', cur_paste=format(cur_paste))
 
-@app.route('/unlisted/<int:paste_hash>/raw/')
+@app.route('/unlisted/<paste_hash>/raw/')
 def view_raw_unlisted_paste(paste_hash):
     ''' Raw version of a specific unlisted paste '''
     cur_paste = pastes.query.filter_by(p_hash=paste_hash).first()
