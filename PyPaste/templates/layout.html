@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+    <title>{% if title %}{{ title }} &middot; {% endif %}PyPaste</title>
+
+    <link href="{{ url_for('static', filename='css/normalize.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26424587-1']);
+      _gaq.push(['_setDomainName', 'buttscicl.es']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+
+</head>
+<body>
+
+    <section class="container">
+
+        <h1>PyPaste</h1>
+        <div class="main-nav">
+            <ul class="nav">
+                <li><a href="#">new</a></li>
+                <li>&middot;</li>
+                <li><a href="#">recent</a></li>
+                <li>&middot;</li>
+                <li><a href="#">api</a></li>
+                <li>&middot;</li>
+                <li><a href="#">login</a></li>
+            </ul>
+        </div>
+
+        {% block body %}{% endblock %}
+
+    </section>
+
+</body>
+</html>

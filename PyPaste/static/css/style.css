@@ -1,0 +1,37 @@
+body {
+    background-color: #EEE;
+}
+
+h1, h2, h3, a {
+    color: #377BA8;
+    margin-top: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    color: #108FE4;
+}
+
+.container {
+    width: 900px;
+    background-color: white;
+    border: 5px solid #CCC;
+    padding: 0.8em;
+    margin: 2em auto;
+}
+
+.nav {
+    padding: 3px;
+    margin: 0;
+    border-top: 3px solid #EEE;
+    background-color: #FAFAFA;
+    text-align: right;
+}
+
+.nav > li {
+    vertical-align: center;
+    display: inline-block;
+}
