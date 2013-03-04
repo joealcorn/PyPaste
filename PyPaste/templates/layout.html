@@ -41,5 +41,16 @@
 
     </section>
 
+    {% if config.VERSION %}
+    <footer>
+      <div class="git-hash">
+        <a href="https://github.com/buttscicles/PyPaste/tree/{{ config.VERSION }}">
+          {{ config.VERSION|truncate(10, killwords=True, end='') }}
+        </a>
+      </div>
+    </footer>
+    {% endif %}
+
+
 </body>
 </html>

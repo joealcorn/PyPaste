@@ -15,12 +15,17 @@ a:hover {
     color: #108FE4;
 }
 
-.container {
+section, footer {
     width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.container {
     background-color: white;
     border: 5px solid #CCC;
     padding: 0.8em;
-    margin: 2em auto;
+    margin: 2em auto 0;
 }
 
 .main-nav {
@@ -64,4 +69,12 @@ textarea[name=text] {
 input[name=submit] {
     float: right;
 
+}
+
+.git-hash {
+    text-align: right;
+}
+
+.git-hash a {
+    color: #CCC;
 }

@@ -7,7 +7,7 @@ def get_version():
     try:
         return check_output('git rev-parse HEAD', shell=True)
     except:
-        return 'Unknown'
+        return None
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
