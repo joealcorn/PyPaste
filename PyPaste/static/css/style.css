@@ -4,7 +4,7 @@ body {
 
 h1, h2, h3, a {
     color: #377BA8;
-    margin-top: 0;
+    margin: 0 0 5px;
 }
 
 a {
@@ -23,15 +23,45 @@ a:hover {
     margin: 2em auto;
 }
 
-.nav {
-    padding: 3px;
-    margin: 0;
+.main-nav {
+    margin-bottom: 8px;
     border-top: 3px solid #EEE;
     background-color: #FAFAFA;
     text-align: right;
 }
 
+.main-nav a {
+    font-size: 14px;
+}
+
+.nav {
+    padding: 3px;
+    margin: 0;
+    display: inline;
+}
+
 .nav > li {
     vertical-align: center;
     display: inline-block;
+}
+
+input, textarea {
+    border: 1px solid #CCC;
+    margin-bottom: 5px;
+    padding: 10px;
+
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+textarea[name=text] {
+    font-family: monospace;
+    width: 100%;
+    height: 200px;
+}
+
+input[name=submit] {
+    float: right;
+
 }

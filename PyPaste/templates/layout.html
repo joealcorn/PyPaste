@@ -5,7 +5,8 @@
 
     <link href="{{ url_for('static', filename='css/normalize.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" type="text/css" />
-
+    {% block css %}{% endblock %}
+    {% block js %}{% endblock %}
     <script type="text/javascript">
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-26424587-1']);
@@ -23,10 +24,10 @@
 
     <section class="container">
 
-        <h1>PyPaste</h1>
+        <h1><a href="{{ url_for('public.index') }}">PyPaste</a></h1>
         <div class="main-nav">
             <ul class="nav">
-                <li><a href="#">new</a></li>
+                <li><a href="{{ url_for('public.index') }}">new</a></li>
                 <li>&middot;</li>
                 <li><a href="#">recent</a></li>
                 <li>&middot;</li>
