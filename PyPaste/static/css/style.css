@@ -7,6 +7,19 @@ h1, h2, h3, a {
     margin: 0 0 5px;
 }
 
+ul {
+    padding-left: 0;
+    margin: 4px 0;
+}
+
+li {
+    list-style-type: none;
+}
+
+pre {
+    margin: 0 0;
+}
+
 a {
     text-decoration: none;
 }
@@ -71,10 +84,49 @@ input[name=submit] {
 
 }
 
+.infobox {
+    border: 1px solid #ccc;
+    background-color: #FAFAFA;
+    padding: 10px;
+}
+
+.paste-details {
+    font-size: 13px;
+    margin-bottom: 2px;
+}
+
+.paste-wrap {
+    width: 100%;
+}
+
 .git-hash {
     text-align: right;
 }
 
 .git-hash a {
     color: #CCC;
+}
+
+.highlighttable {
+    border: 1px solid #ccc;
+    background-color: #F8F8F8;
+    width: 100%;
+    font-size: 13px;
+    display: block;
+    overflow: auto;
+}
+
+.highlight, .code {
+    background-color: #F8F8F8
+}
+
+.linenos {
+    vertical-align: baseline;
+    text-align: right;
+    background-color: #EEE;
+    padding: 5px 10px 0;
+}
+
+.code {
+    padding: 5px 5px 0;
 }

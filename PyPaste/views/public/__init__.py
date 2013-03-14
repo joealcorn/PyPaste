@@ -1,4 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for
+from flask import (
+    abort,
+    Blueprint,
+    redirect,
+    render_template,
+    url_for
+)
 
 from PyPaste.forms import NewPaste
 from PyPaste.models.pastes import Paste
@@ -24,7 +30,16 @@ def index():
         if paste is None:
             return redirect(url_for('public.index'))
         else:
-            # Will redirect to paste page when it's implemented
-            return str(paste['id'])
+            url = url_for('public.view_paste', paste_id=paste['id'])
+            return redirect(url)
 
     return render_template('index.html', form=form)
+
+
+@public.route('/p/<int:paste_id>')
+def view_paste(paste_id):
+    paste = Paste.by_id(paste_id)
+    if paste is None:
+        abort(404)
+    else:
+        return render_template('view_paste.html', paste=paste)

@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+{% block css %}
+    <link href="{{ url_for('static', filename='css/syntax.css') }}" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block js %}
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/timeago.js') }}"></script>
+    <script>
+        $(document).ready(function(){
+            $('.infobox').timeago();
+        })
+    </script>
+{% endblock %}
+
+{% block body %}
+
+<div class="infobox">
+    <h2>{{ paste.title }}</h2>
+    <ul>
+        <li class="paste-details">language: {{ paste.language }}</li>
+        <li class="paste-details">age:
+            <time class="timeago" title="{{ paste.created }}" datetime="{{ paste.created }}">once upon a time</time>
+        </li>
+        <li class="paste-details"><a href="#">view raw</a></li>
+    </ul>
+</div>
+
+<pre class="paste-wrap">
+    {{ paste.highlighted|safe }}
+</pre>
+
+{% endblock %}
