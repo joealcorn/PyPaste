@@ -45,7 +45,7 @@ class Paste(BaseModel):
         formatter = HtmlFormatter(
             linenos=True, lineanchors='line', anchorlinenos=True
         )
-        return highlight(text, lexer, formatter)
+        return (highlight(text, lexer, formatter), lexer.name)
 
     @classmethod
     def init_table(self):
@@ -77,7 +77,7 @@ class Paste(BaseModel):
         if language in ('auto', 'automatic'):
             language = None
 
-        highlighted = self._highlight(text, language)
+        (highlighted, language) = self._highlight(text, language)
 
         if unlisted not in (True, False):
             unlisted = False
