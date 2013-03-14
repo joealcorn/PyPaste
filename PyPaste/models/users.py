@@ -1,31 +1,7 @@
-import bcrypt
-import psycopg2
-from psycopg2.extras import DictCursor
-
-from PyPaste import config
+from PyPaste.models import BaseModel
 
 
-class User(object):
-
-    conn = psycopg2.connect(
-        database=config.PG_DB,
-        user=config.PG_USER,
-        password=config.PG_PASSWORD,
-        host=config.PG_HOST,
-        port=config.PG_PORT
-    )
-
-    @classmethod
-    def _cursor(self):
-        return self.conn.cursor(cursor_factory=DictCursor)
-
-    @staticmethod
-    def _hash_password(password, hashed=None):
-        if hashed is None:
-            # First time a pw has been hashed, gen a salt
-            return bcrypt.hashpw(password, bcrypt.gensalt())
-        else:
-            return bcrypt.hashpw(password, hashed)
+class User(BaseModel):
 
     @classmethod
     def init_table(self):
@@ -50,11 +26,8 @@ class User(object):
 
     @classmethod
     def by_username(self, username):
-        cur = self._cursor()
-        cur.execute('SELECT * FROM users WHERE username = %s', (username,))
-        user = cur.fetchone()
-        cur.close()
-        return user
+        pastes = self._by_param('username', username)
+        return pastes
 
     @classmethod
     def match_password(self, username, password):
