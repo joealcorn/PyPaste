@@ -42,7 +42,10 @@ class Paste(BaseModel):
         else:
             lexer = guess_lexer(text)
 
-        return highlight(text, lexer, HtmlFormatter())
+        formatter = HtmlFormatter(
+            linenos=True, lineanchors='line', anchorlinenos=True
+        )
+        return highlight(text, lexer, formatter)
 
     @classmethod
     def init_table(self):
