@@ -30,7 +30,10 @@ def index():
         if paste is None:
             return redirect(url_for('pastes.index'))
         else:
-            url = url_for('pastes.view_paste', paste_id=paste['id'])
+            if paste['unlisted']:
+                url = url_for('pastes.view_unlisted', paste_hash=paste['hash'])
+            else:
+                url = url_for('pastes.view_paste', paste_id=paste['id'])
             return redirect(url)
 
     return render_template('index.html', form=form)
@@ -40,6 +43,15 @@ def index():
 def view_paste(paste_id):
     paste = Paste.by_id(paste_id)
     if paste is None or paste['unlisted']:
+        abort(404)
+    else:
+        return render_template('view_paste.html', paste=paste)
+
+
+@pastes.route('/u/<paste_hash>')
+def view_unlisted(paste_hash):
+    paste = Paste.by_hash(paste_hash)
+    if paste is None:
         abort(404)
     else:
         return render_template('view_paste.html', paste=paste)
