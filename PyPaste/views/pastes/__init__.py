@@ -9,10 +9,10 @@ from flask import (
 from PyPaste.forms import NewPaste
 from PyPaste.models.pastes import Paste
 
-public = Blueprint('public', __name__, template_folder='templates')
+pastes = Blueprint('pastes', __name__, template_folder='templates')
 
 
-@public.route('/', methods=['GET', 'POST'])
+@pastes.route('/', methods=['GET', 'POST'])
 def index():
     form = NewPaste()
     if form.validate_on_submit():
@@ -28,15 +28,15 @@ def index():
         }
         paste = Paste.new(**vals)
         if paste is None:
-            return redirect(url_for('public.index'))
+            return redirect(url_for('pastes.index'))
         else:
-            url = url_for('public.view_paste', paste_id=paste['id'])
+            url = url_for('pastes.view_paste', paste_id=paste['id'])
             return redirect(url)
 
     return render_template('index.html', form=form)
 
 
-@public.route('/p/<int:paste_id>')
+@pastes.route('/p/<int:paste_id>')
 def view_paste(paste_id):
     paste = Paste.by_id(paste_id)
     if paste is None or paste['unlisted']:
