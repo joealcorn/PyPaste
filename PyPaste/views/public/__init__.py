@@ -39,7 +39,7 @@ def index():
 @public.route('/p/<int:paste_id>')
 def view_paste(paste_id):
     paste = Paste.by_id(paste_id)
-    if paste is None:
+    if paste is None or paste['unlisted']:
         abort(404)
     else:
         return render_template('view_paste.html', paste=paste)
