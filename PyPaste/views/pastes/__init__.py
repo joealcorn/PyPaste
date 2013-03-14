@@ -1,6 +1,7 @@
 from flask import (
     abort,
     Blueprint,
+    make_response,
     redirect,
     render_template,
     url_for
@@ -39,19 +40,33 @@ def index():
     return render_template('index.html', form=form)
 
 
-@pastes.route('/p/<int:paste_id>')
-def view_paste(paste_id):
+@pastes.route('/p/<int:paste_id>/')
+@pastes.route('/p/<int:paste_id>/<raw>/')
+def view_paste(paste_id, raw=None):
     paste = Paste.by_id(paste_id)
     if paste is None or paste['unlisted']:
         abort(404)
-    else:
-        return render_template('view_paste.html', paste=paste)
+
+    if raw is not None:
+        return text_response(paste['text'])
+
+    return render_template('view_paste.html', paste=paste)
 
 
-@pastes.route('/u/<paste_hash>')
-def view_unlisted(paste_hash):
+@pastes.route('/u/<paste_hash>/')
+@pastes.route('/u/<paste_hash>/<raw>/')
+def view_unlisted(paste_hash, raw=None):
     paste = Paste.by_hash(paste_hash)
     if paste is None:
         abort(404)
-    else:
-        return render_template('view_paste.html', paste=paste)
+
+    if raw is not None:
+        return text_response(paste['text'])
+
+    return render_template('view_paste.html', paste=paste)
+
+
+def text_response(text):
+    resp = make_response(text)
+    resp.mimetype = 'text/plain'
+    return resp

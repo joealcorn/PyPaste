@@ -1,3 +1,11 @@
+{% macro raw() %}
+    {% if paste.unlisted %}
+        {{ url_for('pastes.view_unlisted', paste_hash=paste.hash, raw='raw') }}
+    {% else %}
+        {{ url_for('pastes.view_paste', paste_id=paste.id, raw='raw') }}
+    {% endif %}
+{% endmacro %}
+
 {% extends 'layout.html' %}
 {% block css %}
     <link href="{{ url_for('static', filename='css/syntax.css') }}" rel="stylesheet" type="text/css" />
@@ -22,7 +30,7 @@
         <li class="paste-details">age:
             <time class="timeago" title="{{ paste.created }}" datetime="{{ paste.created }}">once upon a time</time>
         </li>
-        <li class="paste-details"><a href="#">view raw</a></li>
+        <li class="paste-details"><a href="{{ raw() }}">view raw</a></li>
     </ul>
 </div>
 
