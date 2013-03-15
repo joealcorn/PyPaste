@@ -4,7 +4,7 @@ from flask.ext import wtf
 class NewPaste(wtf.Form):
     text = wtf.TextAreaField('text', validators=[wtf.Required()])
     title = wtf.TextField('title', validators=[wtf.Optional()])
-    password = wtf.TextField('password', validators=[wtf.Optional()])
+    password = wtf.PasswordField('password', validators=[wtf.Optional()])
     unlisted = wtf.BooleanField('Unlisted')
     submit = wtf.SubmitField('Paste')
     language = wtf.SelectField(
