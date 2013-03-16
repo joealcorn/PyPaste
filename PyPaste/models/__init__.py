@@ -1,6 +1,7 @@
 import bcrypt
 import psycopg2
 from psycopg2.extras import DictCursor
+from psycopg2.extensions import register_type, UNICODE
 
 from PyPaste import config
 
@@ -21,7 +22,9 @@ class BaseModel(object):
 
     @classmethod
     def _cursor(self):
-        return self.conn.cursor(cursor_factory=DictCursor)
+        cur = self.conn.cursor(cursor_factory=DictCursor)
+        register_type(UNICODE, cur)
+        return cur
 
     @classmethod
     def _by_param(self, param, value, fetch_all=False):
