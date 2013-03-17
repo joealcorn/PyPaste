@@ -11,7 +11,6 @@ class NewPaste(wtf.Form):
         'language',
         choices=[
             ('', ''),
-            ('auto', 'Automatic'),
             ('text', 'Text'),
             ('c', 'C'),
             ('csharp', 'C#'),

@@ -7,7 +7,7 @@ from Crypto.Cipher import AES
 from Crypto import Random
 import psycopg2
 from pygments import highlight, util
-from pygments.lexers import get_lexer_by_name, guess_lexer
+from pygments.lexers import get_lexer_by_name, TextLexer
 from pygments.formatters import HtmlFormatter
 
 from PyPaste.models import BaseModel
@@ -46,14 +46,14 @@ class Paste(BaseModel):
         return plaintext
 
     @staticmethod
-    def _highlight(text, language=None):
+    def _highlight(text, language='text'):
         if language is not None:
             try:
                 lexer = get_lexer_by_name(language)
             except util.ClassNotFound:
-                lexer = guess_lexer(text)
+                lexer = TextLexer()
         else:
-            lexer = guess_lexer(text)
+            lexer = TextLexer()
 
         formatter = HtmlFormatter(
             linenos=True, lineanchors='line', anchorlinenos=True
@@ -83,15 +83,12 @@ class Paste(BaseModel):
         cur.close()
 
     @classmethod
-    def new(self, text, title=None, language=None, password=None, unlisted=False):
+    def new(self, text, title=None, language='text', password=None, unlisted=False):
         if isinstance(password, unicode):
             password = password.encode('utf8')
 
         if title is None:
             title = 'Untitled'
-
-        if language in ('auto', 'automatic'):
-            language = None
 
         (highlighted, language) = self._highlight(text, language)
 
