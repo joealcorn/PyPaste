@@ -32,9 +32,9 @@ def index():
             return redirect(url_for('pastes.index'))
         else:
             if paste['unlisted']:
-                url = url_for('pastes.view_unlisted', paste_hash=paste['hash'])
+                url = url_for('pastes.unlisted', paste_hash=paste['hash'])
             else:
-                url = url_for('pastes.view_paste', paste_id=paste['id'])
+                url = url_for('pastes.public', paste_id=paste['id'])
             return redirect(url)
 
     return render_template('index.html', form=form)
@@ -42,31 +42,30 @@ def index():
 
 @pastes.route('/p/<int:paste_id>/')
 @pastes.route('/p/<int:paste_id>/<raw>/')
-def view_paste(paste_id, raw=None):
-    paste = Paste.by_id(paste_id)
-    if paste is None or paste['unlisted']:
-        abort(404)
-
-    if raw is not None:
-        return text_response(paste['text'])
-
-    return render_template('view_paste.html', paste=paste)
+def public(paste_id, raw=None):
+    return view_paste(False, paste_id, raw)
 
 
 @pastes.route('/u/<paste_hash>/')
 @pastes.route('/u/<paste_hash>/<raw>/')
-def view_unlisted(paste_hash, raw=None):
-    paste = Paste.by_hash(paste_hash)
+def unlisted(paste_hash, raw=None):
+    return view_paste(True, paste_hash, raw)
+
+
+def view_paste(unlisted, attr, raw=None):
+    if unlisted:
+        paste = Paste.by_hash(attr)
+    else:
+        paste = Paste.by_id(attr)
+        if paste['unlisted']:
+            abort(404)
+
     if paste is None:
         abort(404)
 
     if raw is not None:
-        return text_response(paste['text'])
+        r = make_response(paste['text'])
+        r.mimetype = 'text/plain'
+        return r
 
     return render_template('view_paste.html', paste=paste)
-
-
-def text_response(text):
-    resp = make_response(text)
-    resp.mimetype = 'text/plain'
-    return resp
