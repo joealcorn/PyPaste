@@ -68,4 +68,8 @@ def view_paste(unlisted, attr, raw=None):
         r.mimetype = 'text/plain'
         return r
 
-    return render_template('view_paste.html', paste=paste)
+    return render_template(
+        'view_paste.html',
+        title=paste['title'],
+        paste=paste
+    )
