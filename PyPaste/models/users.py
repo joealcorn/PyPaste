@@ -26,11 +26,18 @@ class User(BaseModel):
 
     @classmethod
     def by_username(self, username):
+        """
+        Convenience method to grab a paste by username
+
+        """
         pastes = self._by_param('username', username)
         return pastes
 
     @classmethod
-    def match_password(self, username, password):
+    def password_match(self, username, password):
+        """
+        Checks if $password is the correct password for $username
+        """
         user = self.by_username(username)
         if user is None:
             return False

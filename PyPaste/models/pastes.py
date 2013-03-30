@@ -51,6 +51,11 @@ class Paste(BaseModel):
 
     @classmethod
     def new(self, text, title=None, language='text', password=None, unlisted=False):
+        """
+        Insert a new paste into the database.
+        Returns the paste as a dict if successful.
+
+        """
         if title is None:
             title = 'Untitled'
 
@@ -88,10 +93,18 @@ class Paste(BaseModel):
 
     @classmethod
     def by_id(self, _id):
+        """
+        Convenience method to grab a paste by ID
+
+        """
         pastes = self._by_param('id', _id)
         return pastes
 
     @classmethod
     def by_hash(self, _hash):
+        """
+        Convenience method to grab a paste by hash
+
+        """
         pastes = self._by_param('hash', _hash)
         return pastes

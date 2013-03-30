@@ -22,28 +22,39 @@ class BaseModel(object):
 
     @classmethod
     def _cursor(self):
+        """
+        Returns a psycopg2 DictCursor
+
+        """
         cur = self.conn.cursor(cursor_factory=DictCursor)
         register_type(UNICODE, cur)
         return cur
 
     @classmethod
-    def _by_param(self, param, value, fetch_all=False):
+    def _by_param(self, param, value, table='pastes', fetch_all=False):
+        """
+        Executes SQL query equivalent to
+        'SELECT * FROM $table WHERE $param = $value'
+
+        Only trusted input should be used for $table and $param
+
+        """
         cur = self._cursor()
         # Although we should never use string
         # formatting techniques on sql strings,
         # it's OK here because only $value is
         # untrusted
         cur.execute(
-            'SELECT * FROM pastes WHERE {0} = %s LIMIT 1'.format(param),
+            'SELECT * FROM {0} WHERE {1} = %s'.format(table, param),
             (value,)
         )
         if fetch_all:
-            pastes = cur.fetchall()
+            result = cur.fetchall()
         else:
-            pastes = cur.fetchone()
+            result = cur.fetchone()
 
         cur.close()
-        return pastes
+        return result
 
     @staticmethod
     def _hash_password(password, hashed=None):
