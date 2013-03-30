@@ -1,13 +1,15 @@
 from flask import (
     abort,
     Blueprint,
+    flash,
     make_response,
     redirect,
     render_template,
+    session,
     url_for
 )
 
-from PyPaste.forms import NewPaste
+from PyPaste.forms import NewPaste, PastePassword
 from PyPaste.models.pastes import Paste
 
 pastes = Blueprint('pastes', __name__, template_folder='templates')
@@ -31,6 +33,7 @@ def index():
         if paste is None:
             return redirect(url_for('pastes.index'))
         else:
+            authorise_viewing(paste['hash'])
             if paste['unlisted']:
                 url = url_for('pastes.unlisted', paste_hash=paste['hash'])
             else:
@@ -38,6 +41,25 @@ def index():
             return redirect(url)
 
     return render_template('index.html', form=form)
+
+
+@pastes.route('/p/authorise', methods=['POST'])
+def submit_password():
+    form = PastePassword()
+    if form.validate_on_submit():
+        p_hash = form.paste_hash.data
+        password = form.password.data
+
+        if Paste.password_match(p_hash, password):
+            # Password correct, add paste hash to authorised_pastes
+            authorise_viewing(p_hash)
+        else:
+            # Todo: log & cap number of incorrect tries
+            flash('Incorrect password')
+
+        return redirect(form.redirect.data)
+    else:
+        return redirect(form.redirect.data)
 
 
 @pastes.route('/p/<int:paste_id>/')
@@ -52,16 +74,37 @@ def unlisted(paste_hash, raw=None):
     return view_paste(True, paste_hash, raw)
 
 
+def authorise_viewing(p_hash):
+    if not 'authorised_pastes' in session:
+        session['authorised_pastes'] = []
+
+    session['authorised_pastes'].append(p_hash)
+    session.modified = True
+
+
 def view_paste(unlisted, attr, raw=None):
     if unlisted:
         paste = Paste.by_hash(attr)
     else:
         paste = Paste.by_id(attr)
-        if paste['unlisted']:
+        if paste is None or paste['unlisted']:
             abort(404)
 
     if paste is None:
         abort(404)
+
+    # Check if paste is password protected, and if so,
+    # whether the client is allowed to access it or not
+    authorised = session.get('authorised_pastes', [])
+    if (
+        paste['password'] is not None and
+        paste['hash'] not in authorised
+    ):
+        return render_template(
+            'enter_password.html',
+            paste=paste,
+            form=PastePassword()
+        )
 
     if raw is not None:
         r = make_response(paste['text'])

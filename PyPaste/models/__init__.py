@@ -63,3 +63,26 @@ class BaseModel(object):
             return bcrypt.hashpw(password, bcrypt.gensalt())
         else:
             return bcrypt.hashpw(password, hashed)
+
+    @classmethod
+    def _password_match(self, attr, password, _type='paste'):
+        """
+        Checks if $password is the correct password for $attr.
+
+        $attr should be a paste_id or username
+        $_type should be set to 'user' or 'paste' respectively
+        $password should be plaintext.
+
+        """
+        if _type == 'paste':
+            thing = self.by_hash(attr)
+        elif _type == 'user':
+            thing = self.by_username(attr)
+
+        if thing is None:
+            return False
+
+        current = thing['password']
+        if not self._hash_password(password, current) == current:
+            return False
+        return True

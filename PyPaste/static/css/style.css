@@ -99,6 +99,14 @@ input[name=submit] {
     width: 100%;
 }
 
+.password {
+    text-align: center;
+}
+
+.password input[type=submit] {
+    float: none;
+}
+
 .git-hash {
     text-align: right;
 }

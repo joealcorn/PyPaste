@@ -34,3 +34,10 @@ class NewPaste(wtf.Form):
             ('vbnet', 'VB.NET'),
         ]
     )
+
+
+class PastePassword(wtf.Form):
+    paste_hash = wtf.TextField(validators=[wtf.Required()])
+    redirect = wtf.TextField(validators=[wtf.Required()])
+    password = wtf.PasswordField('password', validators=[wtf.Required()])
+    submit = wtf.SubmitField('Submit')

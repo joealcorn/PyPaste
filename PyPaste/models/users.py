@@ -38,13 +38,4 @@ class User(BaseModel):
         """
         Checks if $password is the correct password for $username
         """
-        user = self.by_username(username)
-        if user is None:
-            return False
-
-        current = user['password']
-        if not self._hash_password(password, current) == current:
-            # Incorrect password
-            # Todo: track failed attempts
-            return False
-        return True
+        return self._password_match(username, password, _type='user')
