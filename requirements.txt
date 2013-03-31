@@ -5,3 +5,4 @@ psycopg2==2.4.6
 py-bcrypt==0.2
 Flask-WTF==0.8.2
 WTForms==1.0.3
+nose==1.2.1
