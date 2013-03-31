@@ -27,11 +27,11 @@ class User(BaseModel):
     @classmethod
     def by_username(self, username):
         """
-        Convenience method to grab a paste by username
+        Convenience method to grab a user by username
 
         """
-        pastes = self._by_param('username', username)
-        return pastes
+        user = self._by_param('username', username, table='users')
+        return user
 
     @classmethod
     def password_match(self, username, password):
