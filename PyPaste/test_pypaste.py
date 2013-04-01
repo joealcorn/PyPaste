@@ -9,11 +9,6 @@ from PyPaste.models.pastes import Paste
 # against a seperate db
 app.config['PG_DB'] = 'pypastetesting'
 
-if app.config['PG_USER'] == '':
-    # Configure travis-ci settings
-    app.config['PG_USER'] = 'postgres'
-    app.config['PG_PASSWORD'] = None
-
 Paste.conn = psycopg2.connect(
     database=app.config['PG_DB'],
     user=app.config['PG_USER'],
