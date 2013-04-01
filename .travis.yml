@@ -5,4 +5,5 @@ install: "pip install -r requirements.txt --use-mirrors"
 script:  "nosetests -v"
 
 before_script:
+  - psql -c 'create database pypaste;' -U postgres
   - psql -c 'create database pypastetesting;' -U postgres

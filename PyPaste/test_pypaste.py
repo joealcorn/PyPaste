@@ -3,19 +3,18 @@ import json
 import psycopg2
 
 from PyPaste import app
-from PyPaste.models.pastes import Paste
+from PyPaste.models import pastes
 
-# This allows us to test
-# against a seperate db
-app.config['PG_DB'] = 'pypastetesting'
 
-Paste.conn = psycopg2.connect(
-    database=app.config['PG_DB'],
-    user=app.config['PG_USER'],
-    password=app.config['PG_PASSWORD'],
-    host=app.config['PG_HOST'],
-    port=app.config['PG_PORT']
-)
+class Paste(pastes.Paste):
+
+    conn = psycopg2.connect(
+        database='pypastetesting',
+        user=app.config['PG_USER'],
+        password=app.config['PG_PASSWORD'],
+        host=app.config['PG_HOST'],
+        port=app.config['PG_PORT']
+    )
 
 
 class testCase:
