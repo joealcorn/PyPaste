@@ -2,26 +2,31 @@ import json
 
 import psycopg2
 
-import PyPaste
+from PyPaste import app
 from PyPaste.models.pastes import Paste
 
 # This allows us to test
 # against a seperate db
-PyPaste.app.config['PG_DB'] = 'pypastetesting'
+app.config['PG_DB'] = 'pypastetesting'
+
+if app.config['PG_USER'] == '':
+    # Configure travis-ci settings
+    app.config['PG_USER'] = 'postgres'
+    app.config['PG_PASSWORD'] = None
 
 Paste.conn = psycopg2.connect(
-    database=PyPaste.app.config['PG_DB'],
-    user=PyPaste.app.config['PG_USER'],
-    password=PyPaste.app.config['PG_PASSWORD'],
-    host=PyPaste.app.config['PG_HOST'],
-    port=PyPaste.app.config['PG_PORT']
+    database=app.config['PG_DB'],
+    user=app.config['PG_USER'],
+    password=app.config['PG_PASSWORD'],
+    host=app.config['PG_HOST'],
+    port=app.config['PG_PORT']
 )
 
 
 class testCase:
 
     def setUp(self):
-        self.app = PyPaste.app.test_client()
+        self.app = app.test_client()
         Paste.init_table()
 
     def tearDown(self):
