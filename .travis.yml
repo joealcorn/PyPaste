@@ -10,3 +10,4 @@ before_script:
 
 notifications:
   webhooks: "http://n.tkte.ch/h/682/p4-7eXV_4-tIVUqBBGmigA0d"
+  email: false
