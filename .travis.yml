@@ -7,3 +7,6 @@ script:  "nosetests -v"
 before_script:
   - psql -c 'create database pypaste;' -U postgres
   - psql -c 'create database pypastetesting;' -U postgres
+
+notifications:
+  webhooks: "http://n.tkte.ch/h/682/p4-7eXV_4-tIVUqBBGmigA0d"
