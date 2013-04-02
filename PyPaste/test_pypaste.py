@@ -1,25 +1,15 @@
 import json
 
-import psycopg2
+from flask import session
 
 from PyPaste import app
-from PyPaste.models import pastes
+from PyPaste.models.pastes import Paste
 
 
-class Paste(pastes.Paste):
-
-    conn = psycopg2.connect(
-        database='pypastetesting',
-        user=app.config['PG_USER'],
-        password=app.config['PG_PASSWORD'],
-        host=app.config['PG_HOST'],
-        port=app.config['PG_PORT']
-    )
-
-
-class testCase:
+class TestBase(object):
 
     def setUp(self):
+        app.config['CSRF_ENABLED'] = False
         self.app = app.test_client()
         Paste.init_table()
 
@@ -30,6 +20,9 @@ class testCase:
         cur.execute('DROP TABLE pastes')
         cur.connection.commit()
         cur.close()
+
+
+class test_legacy_api_compat(TestBase):
 
     def legacy_api_post(self, **kw):
         return self.app.post('/api/add', data=kw)
@@ -65,6 +58,73 @@ class testCase:
         assert r.mimetype == 'application/json'
 
         data = json.loads(r.data)
-
         assert not data['success']
         assert isinstance(data['error'], list)
+
+
+class test_core_functionality(TestBase):
+
+    def test_paste_creation(self):
+        p = Paste.new("Look, we're testing!", password='hunter2')
+
+        # Pasting succeeded
+        assert p is not None
+        assert p['id'] == 1
+
+        # Check passwords are being hashed
+        # bcrypt outputs 60 bytes
+        assert p['password'] != 'hunter2'
+        assert len(p['password']) == 60
+
+        # Now check paste creation using the web
+        r = self.app.post('/', data=dict(
+            text='test',
+            title='',
+            password='',
+            language='text',
+            unlisted=None
+        ))
+
+        # Grab the newly made paste
+        p = Paste.by_id(2)
+
+        assert p['text'] == 'test'
+        assert p['password'] is None
+        assert r.status_code == 302
+
+    def test_unlisted_paste(self):
+        p = Paste.new('Test', unlisted=True)
+        id = p['id']
+        hash = p['hash']
+
+        # Unlisted pastes should only be
+        # accessed via /u/:hash
+        r = self.app.get('/p/{0}/'.format(id))
+        assert r.status_code == 404
+
+        r = self.app.get('/u/{0}/'.format(hash))
+        assert r.status_code == 200
+
+    def test_password_protection(self):
+        Paste.new('Test', password='hunter2')
+
+        r = self.app.get('/p/1/')
+
+        # 401 = unauthorised
+        assert r.status_code == 401
+        assert r.mimetype == 'text/html'
+
+    def test_password_authentication(self):
+        p = Paste.new('Test', password='hunter2')
+
+        with app.test_client() as c:
+            r = c.post('/p/authorise', data=dict(
+                paste_hash=p['hash'],
+                password='hunter2',
+                redirect='http://localhost/p/1/',
+            ))
+
+            # Check we've got the correct cookie
+            # and are being redirected
+            assert p['hash'] in session.get('authorised_pastes')
+            assert r.status_code == 302

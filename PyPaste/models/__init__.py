@@ -1,3 +1,5 @@
+import sys
+
 import bcrypt
 import psycopg2
 from psycopg2.extras import DictCursor
@@ -12,8 +14,14 @@ class BaseModel(object):
     some useful shared methods
     """
 
+    db = config.PG_DB
+    if 'nosetests' in sys.argv[0]:
+        # Tests are being run,
+        # use a seperate db
+        db = 'pypastetesting'
+
     conn = psycopg2.connect(
-        database=config.PG_DB,
+        database=db,
         user=config.PG_USER,
         password=config.PG_PASSWORD,
         host=config.PG_HOST,
