@@ -104,7 +104,7 @@ def view_paste(unlisted, attr, raw=None):
             'enter_password.html',
             paste=paste,
             form=PastePassword()
-        )
+        ), 401
 
     if raw is not None:
         r = make_response(paste['text'])
