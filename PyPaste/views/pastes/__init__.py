@@ -55,7 +55,7 @@ def submit_password():
             authorise_viewing(p_hash)
         else:
             # Todo: log & cap number of incorrect tries
-            flash('Incorrect password')
+            flash('Incorrect password', 'error')
 
         return redirect(form.redirect.data)
     else:

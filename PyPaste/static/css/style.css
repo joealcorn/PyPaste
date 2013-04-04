@@ -84,6 +84,20 @@ input[name=submit] {
 
 }
 
+.flash {
+    border-width: 2px;
+    border-style: solid;
+    padding: 5px 7px;
+    margin: 3px 0;
+    text-align: center;
+}
+
+.flash-error {
+    border-color: #eed3d7;
+    color: #b94a48;
+    background-color: #f2dede;
+}
+
 .infobox {
     border: 1px solid #ccc;
     background-color: #FAFAFA;
