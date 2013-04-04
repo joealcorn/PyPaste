@@ -52,6 +52,8 @@ class test_legacy_api_compat(TestBase):
             unlisted=0
         )
         self.legacy_api_assertions_success(r)
+        data = json.loads(r.data)
+        assert data['password'] == 'hunter2'
 
     def test_legacy_api_compat_3(self):
         r = self.legacy_api_post(title='failure')
