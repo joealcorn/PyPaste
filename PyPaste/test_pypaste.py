@@ -130,3 +130,9 @@ class test_core_functionality(TestBase):
             # and are being redirected
             assert p['hash'] in session.get('authorised_pastes')
             assert r.status_code == 302
+
+    def test_raw_paste(self):
+        Paste.new('Hello World!')
+        r = self.app.get('/p/1/raw/')
+        assert r.status_code == 200
+        assert r.mimetype == 'text/plain'
