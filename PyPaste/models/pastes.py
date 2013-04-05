@@ -110,8 +110,8 @@ class Paste(BaseModel):
         return pastes
 
     @classmethod
-    def password_match(self, _hash, password):
+    def password_match(self, paste_hash, password):
         """
-        Checks if $password is the correct password for $_hash
+        Checks if $password is the correct password for $paste_hash
         """
-        return self._password_match(_hash, password)
+        return self._password_match(paste_hash, password)
