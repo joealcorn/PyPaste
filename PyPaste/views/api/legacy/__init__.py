@@ -6,6 +6,7 @@ that actually do use the existing API.
 
 from flask import Blueprint, request, jsonify, url_for
 
+from PyPaste.utils import create_paste_url
 from PyPaste.models.pastes import Paste
 
 legacy = Blueprint('legacy', __name__)
@@ -53,21 +54,8 @@ def add():
             error=errors
         )
 
-    if p['unlisted']:
-        url = url_for(
-            'pastes.unlisted',
-            paste_hash=p['hash'],
-            _external=True
-        )
-    else:
-        url = url_for(
-            'pastes.public',
-            paste_id=p['id'],
-            _external=True
-        )
-
     return jsonify(
         success=True,
-        url=url,
+        url=create_paste_url(p),
         password=paste['password']
     )
