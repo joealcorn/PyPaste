@@ -112,6 +112,7 @@ input[name=submit] {
 
 .paste-wrap {
     width: 100%;
+    margin: 15px 0 0;
 }
 
 .password {
@@ -137,10 +138,16 @@ input[name=submit] {
     font-size: 13px;
     display: block;
     overflow: auto;
+
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+
 }
 
 .highlight, .code {
-    background-color: #F8F8F8
+    background-color: #F8F8F8;
+    padding-bottom: 3px;
 }
 
 .linenos {
