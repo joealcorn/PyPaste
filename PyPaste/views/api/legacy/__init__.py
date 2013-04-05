@@ -4,7 +4,7 @@ that actually do use the existing API.
 
 """
 
-from flask import Blueprint, request, jsonify, url_for
+from flask import Blueprint, request, jsonify
 
 from PyPaste.utils import create_paste_url
 from PyPaste.models.pastes import Paste
