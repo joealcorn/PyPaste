@@ -18,6 +18,7 @@ li {
 
 pre {
     margin: 0 0;
+    white-space: pre;
 }
 
 a {
