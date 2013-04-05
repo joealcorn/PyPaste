@@ -63,6 +63,16 @@ class test_legacy_api_compat(TestBase):
         assert not data['success']
         assert isinstance(data['error'], list)
 
+    def test_unlisted_paste(self):
+        r = self.legacy_api_post(contents='1', unlisted=1)
+        d = json.loads(r.data)
+        assert '/u/' in d['url']
+
+    def test_public_paste(self):
+        r = self.legacy_api_post(contents='1', unlisted=0)
+        d = json.loads(r.data)
+        assert '/p/' in d['url']
+
 
 class test_core_functionality(TestBase):
 

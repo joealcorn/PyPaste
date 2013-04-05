@@ -16,8 +16,8 @@ def add():
     form = request.form
     errors = []
 
-    if form.get('unlisted') in ('0', '1'):
-        unlisted = bool(int(form.get('unlisted')))
+    if form.get('unlisted', type=int) in (0, 1):
+        unlisted = bool(form.get('unlisted', type=int))
     else:
         unlisted = False
 
