@@ -26,3 +26,4 @@ from PyPaste.views import api
 app.register_blueprint(errors)
 app.register_blueprint(pastes)
 app.register_blueprint(api.legacy)
+app.register_blueprint(api.v1)

@@ -1,0 +1,79 @@
+{% macro example(filename) %}
+<div class="paste-wrap api-example">
+    {% include 'examples/' + filename %}
+</div>
+{% endmacro %}
+
+{% extends 'layout.html' %}
+{% block css %}
+    <link href="{{ url_for('static', filename='css/syntax.css') }}" rel="stylesheet" type="text/css" />
+{% endblock %}
+{% block body %}
+
+<h2>Creating a new paste</h2>
+
+<p>
+Creating a new paste is simple, just send as POST request to
+<a href="{{ url_for('v1.new', _external=True) }}">{{ url_for('v1.new', _external=True) }}</a>
+including the fields below as appropriate.
+</p>
+
+<table class="apidocs">
+    <thead>
+        <tr>
+            <th>name</th>
+            <th>accepted values</th>
+            <th>description</th>
+            <th>required</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>text</td>
+            <td>anything</td>
+            <td>the text that you wish to paste</td>
+            <td>yes</td>
+        </tr>
+        <tr>
+            <td>title</td>
+            <td>anything under 50 characters</td>
+            <td>the title of the paste</td>
+            <td>no (default: Untitled)</td>
+        </tr>
+        <tr>
+            <td>password</td>
+            <td>anything</td>
+            <td>the password required to view the paste</td>
+            <td>no (default: Unprotected)</td>
+        </tr>
+        <tr>
+            <td>language</td>
+            <td>any supported language</td>
+            <td>the syntax highlighting that should be applied</td>
+            <td>no (default: plain text)</td>
+        </tr>
+        <tr>
+            <td>unlisted</td>
+            <td>true, false, t, f</td>
+            <td>whether to publicly list your paste</td>
+            <td>no (default: false)</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Example</h3>
+<p>
+    (This Python example uses <a href="http://docs.python-requests.org/en/latest/">requests</a>, don't leave home without it!)
+</p>
+
+{{ example('python.html') }}
+
+<h3>Response</h3>
+<p>
+    A successful API call will respond with a <a href="http://httpstatus.es">200 HTTP status code</a>, anything else is considered a failure.
+    Upon success you'll recieve a JSON response similar to the following:
+</p>
+
+{{ example('response.html') }}
+
+{% endblock %}

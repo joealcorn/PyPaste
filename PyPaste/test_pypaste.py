@@ -146,3 +146,38 @@ class test_core_functionality(TestBase):
         r = self.app.get('/p/1/raw/')
         assert r.status_code == 200
         assert r.mimetype == 'text/plain'
+
+
+class test_v1_api(TestBase):
+
+    def new_paste(self, **kw):
+        return self.app.post('/api/v1/new', data=kw)
+
+    def test_api_creation(self):
+        r = self.new_paste(text='Hello')
+        assert r.status_code == 200
+
+    def test_public_creation(self):
+        r = self.new_paste(text='Hi')
+        d = json.loads(r.data)
+        assert '/p/' in d['url']
+
+    def test_unlisted_creation(self):
+        r = self.new_paste(text='Hi', unlisted='t')
+        d = json.loads(r.data)
+        assert '/u/' in d['url']
+
+    def test_password_creation(self):
+        r = self.new_paste(text='1', password='hunter2')
+        d = json.loads(r.data)
+        assert d['password'] == 'hunter2'
+
+    def test_404_error(self):
+        r = self.app.get('/api/v1/nonexistent')
+        assert r.status_code == 404
+        assert r.mimetype == 'application/json'
+
+    def test_405_error(self):
+        r = self.app.get('/api/v1/new')
+        assert r.status_code == 405
+        assert r.mimetype == 'application/json'
