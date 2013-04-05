@@ -14,7 +14,7 @@
 
 <p>
 Creating a new paste is simple, just send as POST request to
-<a href="{{ url_for('v1.new', _external=True) }}">{{ url_for('v1.new', _external=True) }}</a>
+<a href="{{ url_for('v1.new') }}">{{ url_for('v1.new') }}</a>
 including the fields below as appropriate.
 </p>
 
@@ -75,5 +75,42 @@ including the fields below as appropriate.
 </p>
 
 {{ example('response.html') }}
+
+
+<h2>Grabbing paste information</h2>
+
+<p>
+    Getting info about a paste is just as simple, simply send a GET request to
+    <a href="{{ url_for('v1.get') }}">{{ url_for('v1.get') }}</a>
+    with one or more of the following parameters:
+</p>
+
+<table class="apidocs">
+    <thead>
+        <tr>
+            <th>name</th>
+            <th>accepted values</th>
+            <th>description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>id</td>
+            <td>any integer</td>
+            <td>id of the paste you're requesting</td>
+        </tr>
+        <tr>
+            <td>hash</td>
+            <td>string hash</td>
+            <td>hash of the paste you're requesting</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Additionally, a password parameter is required if the paste is password protected</p>
+
+<h3>Response</h3>
+
+{{ example('get_response.html') }}
 
 {% endblock %}

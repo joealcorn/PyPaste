@@ -187,3 +187,40 @@ class test_v1_api(TestBase):
         r = self.app.get('/api/v1/new')
         assert r.status_code == 405
         assert r.mimetype == 'application/json'
+
+    def test_get_public(self):
+        self.new_paste(text='interesting things')
+        r = self.app.get('/api/v1/get?id=1')
+        assert r.status_code == 200
+        assert r.mimetype == 'application/json'
+
+    def test_get_unlisted(self):
+        p = self.new_paste(text='1', unlisted=True)
+        paste = json.loads(p.data)
+        hash = paste['paste']['hash']
+        r = self.app.get('/api/v1/get?hash=' + hash)
+        assert r.status_code == 200
+
+    def test_get_unlisted_by_id(self):
+        self.new_paste(text='1', unlisted=True)
+        r = self.app.get('/api/v1/get?id=1')
+        assert r.status_code == 400
+
+    def test_get_password_protected(self):
+        self.new_paste(text='1', password='hunter2')
+        r = self.app.get('/api/v1/get?id=1&password=hunter2')
+        print r.data
+        assert r.status_code == 200
+
+    def test_get_wrong_password(self):
+        self.new_paste(text='1', password='hunter2')
+        r = self.app.get('/api/v1/get?id=1&password=hunter3')
+        assert r.status_code == 401
+
+    def test_get_nonexistent(self):
+        r = self.app.get('/api/v1/get?id=1')
+        assert r.status_code == 404
+
+    def test_get_without_id_or_hash(self):
+        r = self.app.get('/api/v1/get')
+        assert r.status_code == 400

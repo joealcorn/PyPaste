@@ -100,6 +100,33 @@ def new():
     return jsonify(response)
 
 
+@v1.route('/get')
+def get():
+    p_id = request.args.get('id', None, type=int)
+    p_hash = request.args.get('hash', None)
+    password = request.args.get('password')
+
+    if p_hash:
+        paste = Paste.by_hash(p_hash)
+    elif p_id:
+        paste = Paste.by_id(p_id)
+    else:
+        return jsonify(error='no id or hash supplied'), 400
+
+    if paste is None:
+        return jsonify(error='paste not found'), 404
+    elif not p_hash and paste['unlisted']:
+        return jsonify(error='paste is unlisted'), 400
+
+    if paste['password']:
+        if not password:
+            return jsonify(error='paste is password protected'), 401
+        elif not Paste.password_match(paste['hash'], password):
+            return jsonify(error='incorrect password'), 401
+
+    return jsonify(create_paste_dict(paste))
+
+
 @v1.errorhandler(404)
 def not_found(error):
     return jsonify(error='resource not found'), 404
