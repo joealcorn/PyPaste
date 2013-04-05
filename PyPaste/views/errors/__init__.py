@@ -1,8 +1,8 @@
-from flask import render_template
+from flask import Blueprint, render_template
 
-from PyPaste import app
+errors = Blueprint('errors', __name__, template_folder='templates')
 
 
-@app.errorhandler(404)
+@errors.app_errorhandler(404)
 def page_not_found(error):
-    return render_template('errors/404.html', title='404'), 404
+    return render_template('404.html', title='404'), 404

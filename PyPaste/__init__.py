@@ -19,9 +19,10 @@ from PyPaste.models.users import User
 Paste.init_table()
 User.init_table()
 
-from PyPaste.views import errors
+from PyPaste.views.errors import errors
 from PyPaste.views.pastes import pastes
 from PyPaste.views import api
 
+app.register_blueprint(errors)
 app.register_blueprint(pastes)
 app.register_blueprint(api.legacy)
