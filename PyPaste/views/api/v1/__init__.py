@@ -51,7 +51,8 @@ def create_paste_dict(paste):
         'hash': paste['hash'],
         'html': paste['highlighted'],
         'unlisted': paste['unlisted'],
-        'created': timegm(paste['created'].timetuple())
+        'created': timegm(paste['created'].timetuple()),
+        'language': paste['language']
     }
 
 

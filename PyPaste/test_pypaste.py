@@ -172,6 +172,12 @@ class test_v1_api(TestBase):
         d = json.loads(r.data)
         assert d['password'] == 'hunter2'
 
+    def test_invalid_language(self):
+        r = self.new_paste(text='1', language='wasdwasdwasd')
+        d = json.loads(r.data)
+        assert r.status_code == 200
+        assert d['paste']['language'] == 'Text only'
+
     def test_404_error(self):
         r = self.app.get('/api/v1/nonexistent')
         assert r.status_code == 404
