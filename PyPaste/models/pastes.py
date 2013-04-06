@@ -113,6 +113,27 @@ class Paste(BaseModel):
         return pastes
 
     @classmethod
+    def recent(self, limit=100, include_unlisted=False):
+        """
+        Grabs :limit: pastes, ordered by time
+
+        """
+        cur = self._cursor()
+
+        if not include_unlisted:
+            statement = '''
+                SELECT * FROM pastes WHERE unlisted = FALSE
+                ORDER BY created desc LIMIT %s
+            '''
+        else:
+            statement = 'SELECT * FROM pastes ORDER BY created DESC LIMIT %s'
+
+        cur.execute(statement, (limit,))
+        res = cur.fetchall()
+        cur.close()
+        return res
+
+    @classmethod
     def password_match(self, paste_hash, password):
         """
         Checks if $password is the correct password for $paste_hash

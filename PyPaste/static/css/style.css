@@ -1,5 +1,6 @@
 body {
     background-color: #EEE;
+    font-size: 14px;
 }
 
 h1, h2, h3, a {
@@ -85,6 +86,10 @@ input[name=submit] {
 
 }
 
+.alt-colour {
+    color: #757575;
+}
+
 .flash {
     border-width: 2px;
     border-style: solid;
@@ -163,6 +168,15 @@ input[name=submit] {
 
 .api-example {
     margin-bottom: 10px;
+}
+
+.paste-grid {
+    text-align: center;
+}
+
+.paste {
+    display: inline-block;
+    margin-bottom: 7px;
 }
 
 .apidocs {

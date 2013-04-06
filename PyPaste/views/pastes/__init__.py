@@ -74,6 +74,11 @@ def unlisted(paste_hash, raw=None):
     return view_paste(True, paste_hash, raw)
 
 
+@pastes.route('/recent')
+def recent():
+    return render_template('recent.html', pastes=Paste.recent())
+
+
 def authorise_viewing(p_hash):
     if not 'authorised_pastes' in session:
         session['authorised_pastes'] = []

@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+{% block css %}
+    <link href="{{ url_for('static', filename='css/syntax.css') }}" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block js %}
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/timeago.js') }}"></script>
+    <script>
+        $(document).ready(function(){
+            $('.infobox').timeago();
+        })
+    </script>
+{% endblock %}
+{% block body %}
+
+<h2>Recent pastes</h2>
+
+<div class="paste-grid">
+    {% for paste in pastes %}
+        <div class="infobox paste">        
+            <span class="alt-colour">#{{ paste.id }}</span>
+            <a href="{{ url_for('pastes.public', paste_id=paste.id) }}">
+                {{ paste.title }}
+            </a>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
