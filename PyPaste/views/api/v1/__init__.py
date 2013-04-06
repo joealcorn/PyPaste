@@ -58,7 +58,7 @@ def create_paste_dict(paste):
 
 @v1.route('/')
 def docs():
-    return render_template('docs.html')
+    return render_template('docs.html', title='api')
 
 
 @v1.route('/new', methods=['POST', 'GET'])

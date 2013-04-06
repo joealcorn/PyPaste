@@ -76,7 +76,11 @@ def unlisted(paste_hash, raw=None):
 
 @pastes.route('/recent')
 def recent():
-    return render_template('recent.html', pastes=Paste.recent())
+    return render_template(
+        'recent.html',
+        pastes=Paste.recent(),
+        title='recent pastes'
+    )
 
 
 def authorise_viewing(p_hash):
