@@ -19,8 +19,8 @@
     <form method='POST' action="{{ request.url }}">
 
         {{ form.hidden_tag() }}
-        {{ form.text(placeholder='Text goes here') }}
-        {{ form.title(placeholder="Title (Optional)") }}
+        {{ form.text(placeholder='Text goes here', autofocus='') }}
+        {{ form.title(placeholder="Title (Optional)", maxlength=50) }}
         {{ form.password(placeholder="Password (Optional)") }}
 
         {{ form.language(**{'data-placeholder': 'Language'}) }}
