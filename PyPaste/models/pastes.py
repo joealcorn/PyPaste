@@ -6,6 +6,7 @@ import psycopg2
 from pygments import highlight, util
 from pygments.lexers import get_lexer_by_name, TextLexer
 from pygments.formatters import HtmlFormatter
+import pytz
 
 from PyPaste.models import BaseModel
 
@@ -68,6 +69,8 @@ class Paste(BaseModel):
             password = self._hash_password(password)
 
         _hash = md5(urandom(64)).hexdigest()
+        created = datetime.utcnow()
+        created = created.replace(tzinfo=pytz.utc)
 
         cur = self._cursor()
         try:
@@ -77,7 +80,7 @@ class Paste(BaseModel):
                 (hash, created, title, text, highlighted, language,
                 password, unlisted) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 """,
-                (_hash, datetime.utcnow(), title, text, highlighted, language,
+                (_hash, created, title, text, highlighted, language,
                 password, unlisted)
             )
             self.conn.commit()
