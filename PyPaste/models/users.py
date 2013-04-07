@@ -1,3 +1,5 @@
+import psycopg2
+
 from PyPaste.models import BaseModel
 
 
@@ -11,7 +13,7 @@ class User(BaseModel):
             CREATE TABLE IF NOT EXISTS users
             (
                 id serial PRIMARY KEY UNIQUE,
-                username varchar(25) UNIQUE,
+                username varchar(25) UNIQUE NOT NULL,
                 password varchar(60),
                 active boolean
             );
@@ -21,8 +23,24 @@ class User(BaseModel):
         cur.close()
 
     @classmethod
-    def new(self):
-        pass
+    def new(self, username, password):
+        password = self._hash_password(password)
+        cur = self._cursor()
+        try:
+            cur.execute(
+                """
+                INSERT INTO users (username, password, active) VALUES
+                (%s, %s, %s)""", (username, password, True)
+            )
+            self.conn.commit()
+        except psycopg2.Error as e:
+            print e
+            self.conn.rollback()
+            cur.close()
+            return False
+
+        cur.close()
+        return True
 
     @classmethod
     def by_username(self, username):

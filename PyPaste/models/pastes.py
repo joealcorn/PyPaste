@@ -95,6 +95,20 @@ class Paste(BaseModel):
         return p
 
     @classmethod
+    def delete(self, hash):
+        cur = self._cursor()
+        try:
+            cur.execute('DELETE FROM pastes WHERE hash = %s', (hash,))
+            self.conn.commit()
+        except psycopg2.Error as e:
+            print e
+            cur.close()
+            return False
+        else:
+            cur.close()
+            return True
+
+    @classmethod
     def by_id(self, _id):
         """
         Convenience method to grab a paste by ID

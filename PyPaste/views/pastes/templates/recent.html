@@ -7,7 +7,13 @@
     {% for paste in pastes %}
         <div class="infobox paste">        
             <span class="alt-colour">#{{ paste.id }}</span>
-            <a href="{{ url_for('pastes.public', paste_id=paste.id) }}">
+            <a href="
+            {%- if paste.unlisted -%}
+                {{ url_for('pastes.unlisted', paste_hash=paste.hash) }}
+            {%- else -%}
+                {{ url_for('pastes.public', paste_id=paste.id) }}
+            {%- endif -%}
+            ">
                 {{ paste.title }}
             </a>
         </div>

@@ -41,3 +41,19 @@ class PastePassword(wtf.Form):
     redirect = wtf.TextField(validators=[wtf.Required()])
     password = wtf.PasswordField('password', validators=[wtf.Required()])
     submit = wtf.SubmitField('Submit')
+
+
+class LoginForm(wtf.Form):
+    username = wtf.TextField(validators=[wtf.Required()])
+    password = wtf.PasswordField(validators=[wtf.Required()])
+    submit = wtf.SubmitField('Login')
+
+
+class LogoutForm(wtf.Form):
+    username = wtf.TextField(validators=[wtf.Required()])
+    submit = wtf.SubmitField('Confirm')
+
+
+class DeletePasteForm(wtf.Form):
+    paste_hash = wtf.html5.TextField(validators=[wtf.Required()])
+    submit = wtf.SubmitField('Confirm')

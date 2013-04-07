@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+{% block body %}
+    <div class="infobox password">
+        <h2>Delete paste?</h2>
+            <form method='POST' action="{{ request.url }}">
+                {{ form.hidden_tag() }}
+                {{ form.paste_hash(type='hidden', value=hash) }}
+                {{ form.submit }}
+            </form>
+    </div>
+{% endblock %}

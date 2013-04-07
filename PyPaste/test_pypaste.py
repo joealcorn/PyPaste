@@ -4,6 +4,7 @@ from flask import session
 
 from PyPaste import app
 from PyPaste.models.pastes import Paste
+from PyPaste.models.users import User
 
 
 class TestBase(object):
@@ -12,12 +13,14 @@ class TestBase(object):
         app.config['CSRF_ENABLED'] = False
         self.app = app.test_client()
         Paste.init_table()
+        User.init_table()
 
     def tearDown(self):
         # drop the table so we can
         # recreate it for other tests
         cur = Paste._cursor()
         cur.execute('DROP TABLE pastes')
+        cur.execute('DROP TABLE users')
         cur.connection.commit()
         cur.close()
 
@@ -224,3 +227,51 @@ class test_v1_api(TestBase):
     def test_get_without_id_or_hash(self):
         r = self.app.get('/api/v1/get')
         assert r.status_code == 400
+
+
+class test_admin_capabilities(TestBase):
+
+    def add_account(self, name='admin', password='hunter2'):
+        User.new(name, password)
+
+    def test_login(self):
+        self.add_account()
+        with app.test_client() as c:
+            c.post('/a/in', data=dict(
+                username='admin',
+                password='hunter2'
+            ))
+
+            assert session.get('username') == 'admin'
+            assert session.get('logged_in')
+
+    def test_logout(self):
+        self.add_account()
+        with app.test_client() as c:
+            c.post('/a/in', data=dict(
+                username='admin',
+                password='hunter2'
+            ))
+
+            c.post('/a/out', data=dict(
+                username='admin'
+            ))
+
+            assert session.get('username') is None
+            assert session.get('logged_in') is None
+
+    def test_paste_deletion(self):
+        self.add_account()
+        p = Paste.new(text='test')
+        with app.test_client() as c:
+            c.post('/a/in', data=dict(
+                username='admin',
+                password='hunter2'
+            ))
+
+            c.post('/a/del/' + p['hash'], data=dict(
+                paste_hash=p['hash']
+            ))
+
+        paste = Paste.by_hash(p['hash'])
+        assert paste is None

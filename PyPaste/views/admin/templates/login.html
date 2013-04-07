@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+{% block body %}
+    <div class="infobox password">
+        <h2>Log in</h2>
+            <form method='POST' action="{{ request.url }}">
+                {{ form.hidden_tag() }}
+                {{ form.username(placeholder='Username') }}
+                {{ form.password(placeholder='Password') }}
+                {{ form.submit }}
+            </form>
+    </div>
+{% endblock %}

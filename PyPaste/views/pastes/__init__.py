@@ -9,7 +9,7 @@ from flask import (
     url_for
 )
 
-from PyPaste.forms import NewPaste, PastePassword
+from PyPaste.forms import NewPaste, PastePassword, DeletePasteForm
 from PyPaste.models.pastes import Paste
 
 pastes = Blueprint('pastes', __name__, template_folder='templates')
@@ -76,9 +76,14 @@ def unlisted(paste_hash, raw=None):
 
 @pastes.route('/recent')
 def recent():
+    if session.get('logged_in'):
+        pastes = Paste.recent(include_unlisted=True)
+    else:
+        pastes = Paste.recent()
+
     return render_template(
         'recent.html',
-        pastes=Paste.recent(),
+        pastes=pastes,
         title='recent pastes'
     )
 
@@ -123,5 +128,5 @@ def view_paste(unlisted, attr, raw=None):
     return render_template(
         'view_paste.html',
         title=paste['title'],
-        paste=paste
+        paste=paste,
     )

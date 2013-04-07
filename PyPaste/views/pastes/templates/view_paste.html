@@ -23,6 +23,9 @@
             <time class="timeago" title="{{ paste.created }}" datetime="{{ paste.created }}">once upon a time</time>
         </li>
         <li class="paste-details"><a href="raw">view raw</a></li>
+        {% if session.logged_in %}
+        <li><a class="paste-details" href="{{ url_for('admin.delete_paste', hash=paste.hash) }}">delete</a></li>
+        {% endif %}
     </ul>
 </div>
 
