@@ -1,4 +1,4 @@
-# PyPaste [![Build Status](https://travis-ci.org/buttscicles/PyPaste.png?branch=rewrite)](https://travis-ci.org/buttscicles/PyPaste)
+# PyPaste [![Build Status](https://travis-ci.org/buttscicles/PyPaste.png)](https://travis-ci.org/buttscicles/PyPaste)
 
 Simple Python pastebin using Flask, Pygments & Postgres.
 
