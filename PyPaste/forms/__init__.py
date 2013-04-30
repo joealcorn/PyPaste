@@ -6,6 +6,7 @@ class NewPaste(wtf.Form):
     title = wtf.TextField('title', validators=[wtf.Optional()])
     password = wtf.PasswordField('password', validators=[wtf.Optional()])
     unlisted = wtf.BooleanField('Unlisted')
+    honeypot = wtf.TextField('honeypot')
     submit = wtf.SubmitField('Paste')
     language = wtf.SelectField(
         'language',
@@ -35,6 +36,13 @@ class NewPaste(wtf.Form):
         ]
     )
 
+    def validate_honeypot(form, field):
+        """
+        This ensures the hidden honeypot field is left blank,
+        only automated spambots should attempt to fill it in
+        """
+        if field.data != '':
+            raise wtf.validators.ValidationError()
 
 class PastePassword(wtf.Form):
     paste_hash = wtf.TextField(validators=[wtf.Required()])
