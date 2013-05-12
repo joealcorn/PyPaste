@@ -79,20 +79,21 @@ class Paste(BaseModel):
                 INSERT INTO pastes
                 (hash, created, title, text, highlighted, language,
                 password, unlisted) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                RETURNING *
                 """,
                 (_hash, created, title, text, highlighted, language,
                 password, unlisted)
             )
+            paste = cur.fetchone()
             self.conn.commit()
+            cur.close()
+            return paste
+
         except psycopg2.Error as e:
             print e
             self.conn.rollback()
             cur.close()
             return None
-
-        cur.close()
-        p = self.by_hash(_hash)
-        return p
 
     @classmethod
     def delete(self, hash):
