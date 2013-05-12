@@ -6,10 +6,22 @@
 {% block js %}
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="{{ url_for('static', filename='js/timeago.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/ZeroClipboard.min.js') }}"></script>
     <script>
         $(document).ready(function(){
             $('.infobox').timeago();
-        })
+
+            ZeroClipboard.setDefaults({
+                moviePath: "{{ url_for('static', filename='ZeroClipboard.swf') }}"
+            });
+
+            var clip = new ZeroClipboard($('input.paste-details'));
+
+            clip.on('mousedown', function(event) {
+                $('.shortlink input').select();
+                $('.shortlink .hidden').show();
+            });
+        });
     </script>
 {% endblock %}
 
@@ -22,9 +34,16 @@
         <li class="paste-details">age:
             <time class="timeago" title="{{ paste.created }}" datetime="{{ paste.created }}">once upon a time</time>
         </li>
+
         <li class="paste-details"><a href="raw">view raw</a></li>
         {% if session.logged_in %}
         <li><a class="paste-details" href="{{ url_for('admin.delete_paste', hash=paste.hash) }}">delete</a></li>
+        {% endif %}
+        {% if paste.shortlink %}
+        <li class="shortlink paste-details">shortlink:
+            <input class="paste-details" value="{{ paste.shortlink }}"  data-clipboard-text="{{ paste.shortlink }}" readonly>
+            <span class="hidden">Copied!</span>
+        </li>
         {% endif %}
     </ul>
 </div>

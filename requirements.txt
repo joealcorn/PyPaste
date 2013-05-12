@@ -8,3 +8,4 @@ WTForms==1.0.3
 nose==1.2.1
 Pygments==1.6
 pytz==2013b
+requests==1.2.0

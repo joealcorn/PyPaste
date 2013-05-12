@@ -7,8 +7,10 @@ from pygments import highlight, util
 from pygments.lexers import get_lexer_by_name, TextLexer
 from pygments.formatters import HtmlFormatter
 import pytz
+import requests
 
 from PyPaste.models import BaseModel
+from PyPaste.utils import create_paste_url
 
 
 class Paste(BaseModel):
@@ -28,6 +30,20 @@ class Paste(BaseModel):
         )
         return (highlight(text, lexer, formatter), lexer.name)
 
+    @staticmethod
+    def get_shortlink(url):
+        data = {
+            'url': url
+        }
+        try:
+            r = requests.post('http://yl.io/shorten', data=data, timeout=1.0)
+            if r.status_code != 200:
+                return None
+            else:
+                return r.json()['url']
+        except:
+            return None
+
     @classmethod
     def init_table(self):
         cur = self._cursor()
@@ -43,7 +59,8 @@ class Paste(BaseModel):
                 highlighted text,
                 language varchar(20),
                 password varchar(60),
-                unlisted boolean
+                unlisted boolean,
+                shortlink text
             );
             """
         )
@@ -85,6 +102,16 @@ class Paste(BaseModel):
                 password, unlisted)
             )
             paste = cur.fetchone()
+
+            shortlink = self.get_shortlink(create_paste_url(paste))
+            if shortlink is not None:
+                cur.execute(
+                    """
+                    UPDATE pastes SET shortlink = %s
+                    WHERE hash = %s
+                    """, (shortlink, paste['hash'])
+                )
+
             self.conn.commit()
             cur.close()
             return paste

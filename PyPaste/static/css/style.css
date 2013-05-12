@@ -36,6 +36,10 @@ section, footer {
     margin-right: auto;
 }
 
+.hidden {
+    display: none;
+}
+
 .container {
     background-color: white;
     border: 5px solid #CCC;
@@ -113,6 +117,11 @@ input[name=submit] {
 .paste-details {
     font-size: 13px;
     margin-bottom: 2px;
+}
+
+.paste-details input {
+    padding: 2px;
+    width: 100px;
 }
 
 .paste-wrap {
