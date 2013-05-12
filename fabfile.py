@@ -1,7 +1,22 @@
+from getpass import getpass
+
 from fabric.api import task
 
 from PyPaste.models.pastes import Paste
+from PyPaste.models.users import User
 from PyPaste.utils import create_paste_url
+
+
+@task
+def add_user(username=None):
+    if username is None:
+        username = raw_input('Username: ')
+
+    password = getpass('Password: ')
+    if User.new(username, password):
+        print 'Success.'
+    else:
+        print 'Failure, try again.'
 
 
 @task
