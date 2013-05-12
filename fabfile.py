@@ -1,6 +1,7 @@
 from getpass import getpass
+import os
 
-from fabric.api import task, env, cd, run
+from fabric.api import task, env, cd, run, local
 
 from PyPaste.models.pastes import Paste
 from PyPaste.models.users import User
@@ -14,6 +15,13 @@ def deploy(remote='origin', branch='master'):
     with cd('~/projects/PyPaste/'):
         run('git pull %s %s' % (remote, branch))
         run('pkill -f --signal HUP "gunicorn: master \[PyPaste\]"')
+
+
+@task
+def test():
+    os.environ['PYPASTE_TESTING'] = '1'
+    local('nosetests -v')
+    os.unsetenv('PYPASTE_TESTING')
 
 
 @task

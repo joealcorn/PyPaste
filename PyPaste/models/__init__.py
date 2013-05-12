@@ -1,4 +1,4 @@
-import sys
+from os import environ
 
 import bcrypt
 import psycopg2
@@ -15,7 +15,7 @@ class BaseModel(object):
     """
 
     db = config.PG_DB
-    if 'nosetests' in sys.argv[0]:
+    if environ.get('PYPASTE_TESTING'):
         # Tests are being run,
         # use a seperate db
         db = 'pypastetesting'

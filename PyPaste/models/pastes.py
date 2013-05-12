@@ -1,4 +1,4 @@
-from os import urandom
+from os import urandom, environ
 from datetime import datetime
 from hashlib import md5
 
@@ -103,7 +103,9 @@ class Paste(BaseModel):
             )
             paste = cur.fetchone()
 
-            shortlink = self.get_shortlink(create_paste_url(paste))
+            shortlink = None
+            if not environ.get('PYPASTE_TESTING'):
+                shortlink = self.get_shortlink(create_paste_url(paste))
             if shortlink is not None:
                 cur.execute(
                     """
