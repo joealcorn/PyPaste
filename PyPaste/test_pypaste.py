@@ -80,7 +80,8 @@ class test_legacy_api_compat(TestBase):
 class test_core_functionality(TestBase):
 
     def test_paste_creation(self):
-        p = Paste.new("Look, we're testing!", password='hunter2')
+        with app.test_request_context():
+            p = Paste.new("Look, we're testing!", password='hunter2')
 
         # Pasting succeeded
         assert p is not None
@@ -108,7 +109,9 @@ class test_core_functionality(TestBase):
         assert r.status_code == 302
 
     def test_unlisted_paste(self):
-        p = Paste.new('Test', unlisted=True)
+        with app.test_request_context():
+            p = Paste.new('Test', unlisted=True)
+
         id = p['id']
         hash = p['hash']
 
@@ -121,7 +124,8 @@ class test_core_functionality(TestBase):
         assert r.status_code == 200
 
     def test_password_protection(self):
-        Paste.new('Test', password='hunter2')
+        with app.test_request_context():
+            Paste.new('Test', password='hunter2')
 
         r = self.app.get('/p/1/')
 
@@ -130,7 +134,8 @@ class test_core_functionality(TestBase):
         assert r.mimetype == 'text/html'
 
     def test_password_authentication(self):
-        p = Paste.new('Test', password='hunter2')
+        with app.test_request_context():
+            p = Paste.new('Test', password='hunter2')
 
         with app.test_client() as c:
             r = c.post('/p/authorise', data=dict(
@@ -145,7 +150,8 @@ class test_core_functionality(TestBase):
             assert r.status_code == 302
 
     def test_raw_paste(self):
-        Paste.new('Hello World!')
+        with app.test_request_context():
+            Paste.new('Hello World!')
         r = self.app.get('/p/1/raw/')
         assert r.status_code == 200
         assert r.mimetype == 'text/plain'
@@ -262,7 +268,8 @@ class test_admin_capabilities(TestBase):
 
     def test_paste_deletion(self):
         self.add_account()
-        p = Paste.new(text='test')
+        with app.test_request_context():
+            p = Paste.new(text='test')
         with app.test_client() as c:
             c.post('/a/in', data=dict(
                 username='admin',
