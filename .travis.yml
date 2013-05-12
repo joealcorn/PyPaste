@@ -5,7 +5,8 @@ install: "pip install -r requirements.txt"
 script:  "nosetests -v"
 
 before_script:
-  - psql -c 'create database pypastetesting;' -U postgres
+  - "cp PyPaste/config.py.default PyPaste/config.py"
+  - "psql -c 'create database pypastetesting;' -U postgres"
 
 notifications:
   webhooks: "http://n.tkte.ch/h/682/p4-7eXV_4-tIVUqBBGmigA0d"

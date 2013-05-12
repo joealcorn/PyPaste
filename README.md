@@ -6,6 +6,7 @@ Simple Python pastebin using Flask, Pygments & Postgres.
     $ git clone git://github.com/buttscicles/PyPaste.git
     $ cd PyPaste
     $ pip install -r requirements.txt
+    $ cp PyPaste/config.py.default PyPaste/config.py
     $ python run.py
 
 PyPaste implements a basic login system to allow admins to easily delete pastes, etc.  
