@@ -11,3 +11,7 @@ Simple Python pastebin using Flask, Pygments & Postgres.
 
 PyPaste implements a basic login system to allow admins to easily delete pastes, etc.  
 `$ fab add_user` can be used to add users.
+
+PyPaste has some test coverage, they can be run using a fab command
+    
+    $ fab test
