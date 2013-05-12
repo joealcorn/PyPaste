@@ -8,9 +8,9 @@ from flask import (
     flash,
     abort,
     redirect,
-    url_for
 )
 
+from PyPaste.utils import pypaste_url_for as url_for
 from PyPaste.forms import LoginForm, LogoutForm, DeletePasteForm
 from PyPaste.models.users import User
 from PyPaste.models.pastes import Paste

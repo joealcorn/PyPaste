@@ -2,6 +2,7 @@
 # Flask                #
 # ==================== #
 SECRET_KEY = 'dev key'
+FORCE_SSL = False
 
 
 # ==================== #

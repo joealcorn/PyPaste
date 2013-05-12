@@ -6,9 +6,9 @@ from flask import (
     redirect,
     render_template,
     session,
-    url_for
 )
 
+from PyPaste.utils import pypaste_url_for as url_for
 from PyPaste.forms import NewPaste, PastePassword, DeletePasteForm
 from PyPaste.models.pastes import Paste
 

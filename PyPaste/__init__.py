@@ -1,6 +1,6 @@
 from subprocess import check_output
 
-from flask import Flask
+from flask import Flask, url_for, request, redirect
 
 
 def get_version():
@@ -29,3 +29,12 @@ app.register_blueprint(pastes)
 app.register_blueprint(admin)
 app.register_blueprint(api.legacy)
 app.register_blueprint(api.v1)
+
+
+# This allows us to enforce the FORCE_SSL config option
+# Any redirection should be done at the httpd level
+from PyPaste.utils import pypaste_url_for
+
+@app.context_processor
+def override_url_for():
+    return dict(url_for=pypaste_url_for)
