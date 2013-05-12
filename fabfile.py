@@ -1,10 +1,19 @@
 from getpass import getpass
 
-from fabric.api import task
+from fabric.api import task, env, cd, run
 
 from PyPaste.models.pastes import Paste
 from PyPaste.models.users import User
 from PyPaste.utils import create_paste_url
+
+env.hosts = ['paste.buttscicl.es']
+
+
+@task
+def deploy(remote='origin', branch='master'):
+    with cd('~/projects/PyPaste/'):
+        run('git pull %s %s' % (remote, branch))
+        run('pkill -f --signal HUP "gunicorn: master \[PyPaste\]"')
 
 
 @task
