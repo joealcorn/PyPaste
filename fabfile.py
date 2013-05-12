@@ -23,7 +23,7 @@ def deploy(remote='origin', branch='master'):
 def test():
     os.environ['PYPASTE_TESTING'] = '1'
     local('nosetests -v')
-    os.unsetenv('PYPASTE_TESTING')
+    os.environ.pop('PYPASTE_TESTING')
 
 
 @task
