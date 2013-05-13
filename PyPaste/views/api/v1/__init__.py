@@ -93,6 +93,7 @@ def new():
 
     response = {
         'url': create_paste_url(p),
+        'shorturl': p['shortlink'],
         'paste': create_paste_dict(p),
         'password': paste['password'],
     }
@@ -124,7 +125,11 @@ def get():
         elif not Paste.password_match(paste['hash'], password):
             return jsonify(error='incorrect password'), 401
 
-    return jsonify(create_paste_dict(paste))
+    return jsonify(
+        create_paste_dict(paste),
+        shorturl=paste['shortlink'],
+        url=create_paste_url(paste)
+    )
 
 
 @v1.errorhandler(404)

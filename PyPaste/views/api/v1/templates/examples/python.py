@@ -1,6 +1,6 @@
 import requests
 
-post_url = 'http://localhost:5000/api/v1/new'
+post_url = 'https://paste.buttscicl.es/api/v1/new'
 data = {
     'text': 'Hello World!',
     'unlisted': True
