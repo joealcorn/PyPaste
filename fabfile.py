@@ -1,5 +1,13 @@
+"""
+Most commands in here are custom to my
+local or server config, they'll need to
+be adjusted if you wish to use them
+
+"""
+
 from getpass import getpass
 import os
+from glob import glob
 
 from fabric.api import task, env, cd, run, local, prefix
 
@@ -24,6 +32,26 @@ def test():
     os.environ['PYPASTE_TESTING'] = '1'
     local('nosetests -v')
     os.environ.pop('PYPASTE_TESTING')
+
+
+@task
+def highlight_examples():
+    extensions = {
+        'py': 'python',
+        'json': 'json'
+    }
+
+    files = glob('/home/joe/git/PyPaste/PyPaste/views/api/v1/templates/examples/*')
+    files = [f for f in files if not f.endswith('.html')]
+    for f in files:
+        extension = f.rsplit('.', 1)[1]
+        local('{pygments} -f html -l {ext} -O {opt} -o {output} {input}'.format(
+            pygments='/home/joe/.venvs/pypaste/bin/pygmentize',
+            ext=extensions[extension],
+            opt='linenos=1,lineanchors=line,anchorlinenos=1',
+            input=f,
+            output=f.replace('.' + extension, '.html')
+        ))
 
 
 @task
