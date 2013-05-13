@@ -20,8 +20,8 @@
 
         {{ form.hidden_tag(form.honeypot, form.csrf_token) }}
         {{ form.text(placeholder='Text goes here', autofocus='') }}
-        {{ form.title(placeholder="Title (Optional)", maxlength=50) }}
-        {{ form.password(placeholder="Password (Optional)") }}
+        {{ form.title(placeholder="Title (Optional)", maxlength=50, autocomplete='off') }}
+        {{ form.password(placeholder="Password (Optional)", autocomplete='off') }}
 
         {{ form.language(**{'data-placeholder': 'Language'}) }}
 
