@@ -2,7 +2,7 @@
 {% block body %}
     <div class="infobox password">
         <h2>Log out?</h2>
-            <form method='POST' action="{{ request.url }}">
+            <form method='POST' action="{{ url_for('admin.logout') }}">
                 {{ form.hidden_tag() }}
                 {{ form.username(type='hidden', value=session.username) }}
                 {{ form.submit }}

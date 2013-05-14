@@ -16,7 +16,7 @@
 
 {% block body %}
 
-    <form method='POST' action="{{ request.url }}">
+    <form method='POST' action="{{ url_for('pastes.index') }}">
 
         {{ form.hidden_tag(form.honeypot, form.csrf_token) }}
         {{ form.text(placeholder='Text goes here', autofocus='') }}

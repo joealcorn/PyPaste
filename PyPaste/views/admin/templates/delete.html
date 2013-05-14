@@ -2,7 +2,7 @@
 {% block body %}
     <div class="infobox password">
         <h2>Delete paste?</h2>
-            <form method='POST' action="{{ request.url }}">
+            <form method='POST' action="{{ url_for('admin.delete_paste', hash=hash) }}">
                 {{ form.hidden_tag() }}
                 {{ form.paste_hash(type='hidden', value=hash) }}
                 {{ form.submit }}
