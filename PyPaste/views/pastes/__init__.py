@@ -4,12 +4,13 @@ from flask import (
     flash,
     make_response,
     redirect,
+    request,
     render_template,
     session,
 )
 
 from PyPaste.utils import pypaste_url_for as url_for
-from PyPaste.forms import NewPaste, PastePassword, DeletePasteForm
+from PyPaste.forms import NewPaste, PastePassword
 from PyPaste.models.pastes import Paste
 
 pastes = Blueprint('pastes', __name__, template_folder='templates')
@@ -39,6 +40,11 @@ def index():
             else:
                 url = url_for('pastes.public', paste_id=paste['id'])
             return redirect(url)
+    elif request.method == 'POST':
+        # Form submitted but failed validation
+        for field, error in form.errors.items():
+            errormsg = '{0}: {1}'.format(field, error[0])
+            flash(errormsg, 'error')
 
     return render_template('index.html', form=form)
 
