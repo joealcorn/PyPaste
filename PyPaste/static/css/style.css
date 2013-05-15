@@ -139,6 +139,7 @@ input[name=submit] {
 
 .git-hash {
     text-align: right;
+    padding-bottom: 10px;
 }
 
 .git-hash a {
