@@ -13,6 +13,11 @@ app = Flask(__name__)
 app.config.from_pyfile('config.py')
 app.config['VERSION'] = get_version()
 
+if app.config.get('SENTRY_DSN'):
+    from raven.contrib.flask import Sentry
+    sentry = Sentry(app)
+
+
 from PyPaste.models.pastes import Paste
 from PyPaste.models.users import User
 
