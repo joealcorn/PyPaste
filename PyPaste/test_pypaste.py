@@ -156,6 +156,19 @@ class test_core_functionality(TestBase):
         assert r.status_code == 200
         assert r.mimetype == 'text/plain'
 
+    def test_honeypot(self):
+        with app.test_client() as c:
+            c.post('/', data=dict(
+                text='test',
+                title='',
+                password='',
+                language='text',
+                unlisted=None,
+                uid='invalid'
+            ))
+
+            assert Paste.by_id(1) is None
+
 
 class test_v1_api(TestBase):
 
