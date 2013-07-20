@@ -2,7 +2,7 @@ import json
 
 from flask import session
 
-from PyPaste import app
+from PyPaste import app, utils
 from PyPaste.models.pastes import Paste
 from PyPaste.models.users import User
 
@@ -295,3 +295,27 @@ class test_admin_capabilities(TestBase):
 
         paste = Paste.by_hash(p['hash'])
         assert paste is None
+
+
+class test_utils(TestBase):
+
+    def test_url(self):
+        with app.test_request_context():
+            p = Paste.new(text='test')
+            url = utils.create_paste_url(p)
+            assert url == 'http://localhost/p/1/'
+
+            url = utils.create_paste_url(p, relative=True)
+            assert url == '/p/1/'
+
+    def test_url_for(self):
+        with app.test_request_context():
+            url = utils.pypaste_url_for('pastes.public', paste_id=1)
+            assert url == '/p/1/'
+
+            url = utils.pypaste_url_for('pastes.public', paste_id=1, _scheme='https')
+            assert url == 'https://localhost/p/1/'
+
+            app.config['FORCE_SSL'] = True
+            url = utils.pypaste_url_for('pastes.public', paste_id=1)
+            assert url == 'https://localhost/p/1/'

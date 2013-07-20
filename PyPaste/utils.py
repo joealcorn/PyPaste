@@ -34,6 +34,9 @@ def pypaste_url_for(endpoint, **kwargs):
             # Remove conflict
             del kwargs['_external']
 
+        if '_scheme' in kwargs:
+            del kwargs['_scheme']
+
         url = url_for(endpoint, _external=True, **kwargs)
         return 'https' + url[4:]
     else:
