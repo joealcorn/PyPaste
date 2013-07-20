@@ -90,6 +90,11 @@ input[name=submit] {
 
 }
 
+input[name=uid] {
+    /* honeypot field */
+    display: none;
+}
+
 .alt-colour {
     color: #757575;
 }
