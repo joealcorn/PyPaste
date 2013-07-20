@@ -134,7 +134,7 @@ class test_core_functionality(TestBase):
     def test_password_authentication(self):
         p = Paste.new('Test', password='hunter2')
 
-        with app.test_client() as c:
+        with self.app as c:
             r = c.post('/p/authorise', data=dict(
                 paste_hash=p['hash'],
                 password='hunter2',
@@ -250,7 +250,7 @@ class test_admin_capabilities(TestBase):
 
     def test_login(self):
         self.add_account()
-        with app.test_client() as c:
+        with self.app as c:
             c.post('/a/in', data=dict(
                 username='admin',
                 password='hunter2'
@@ -261,7 +261,7 @@ class test_admin_capabilities(TestBase):
 
     def test_logout(self):
         self.add_account()
-        with app.test_client() as c:
+        with self.app as c:
             c.post('/a/in', data=dict(
                 username='admin',
                 password='hunter2'
