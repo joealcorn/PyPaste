@@ -12,7 +12,7 @@ class TestBase(object):
     def setUp(self):
         app.testing = True
         app.config['CSRF_ENABLED'] = False
-        self.app = app.test_client()
+        self.client = app.test_client()
         Paste.init_table()
         User.init_table()
 
@@ -29,7 +29,7 @@ class TestBase(object):
 class test_legacy_api_compat(TestBase):
 
     def legacy_api_post(self, **kw):
-        return self.app.post('/api/add', data=kw)
+        return self.client.post('/api/add', data=kw)
 
     def legacy_api_assertions_success(self, response):
         assert response.status_code == 200
@@ -93,7 +93,7 @@ class test_core_functionality(TestBase):
         assert len(p['password']) == 60
 
         # Now check paste creation using the web
-        r = self.app.post('/', data=dict(
+        r = self.client.post('/', data=dict(
             text='test',
             title='',
             password='',
@@ -116,16 +116,16 @@ class test_core_functionality(TestBase):
 
         # Unlisted pastes should only be
         # accessed via /u/:hash
-        r = self.app.get('/p/{0}/'.format(id))
+        r = self.client.get('/p/{0}/'.format(id))
         assert r.status_code == 404
 
-        r = self.app.get('/u/{0}/'.format(hash))
+        r = self.client.get('/u/{0}/'.format(hash))
         assert r.status_code == 200
 
     def test_password_protection(self):
         Paste.new('Test', password='hunter2')
 
-        r = self.app.get('/p/1/')
+        r = self.client.get('/p/1/')
 
         # 401 = unauthorised
         assert r.status_code == 401
@@ -134,7 +134,7 @@ class test_core_functionality(TestBase):
     def test_password_authentication(self):
         p = Paste.new('Test', password='hunter2')
 
-        with self.app as c:
+        with self.client as c:
             r = c.post('/p/authorise', data=dict(
                 paste_hash=p['hash'],
                 password='hunter2',
@@ -148,12 +148,12 @@ class test_core_functionality(TestBase):
 
     def test_raw_paste(self):
         Paste.new('Hello World!')
-        r = self.app.get('/p/1/raw/')
+        r = self.client.get('/p/1/raw/')
         assert r.status_code == 200
         assert r.mimetype == 'text/plain'
 
     def test_honeypot(self):
-        self.app.post('/', data=dict(
+        self.client.post('/', data=dict(
             text='test',
             title='',
             password='',
@@ -168,7 +168,7 @@ class test_core_functionality(TestBase):
 class test_v1_api(TestBase):
 
     def new_paste(self, **kw):
-        return self.app.post('/api/v1/new', data=kw)
+        return self.client.post('/api/v1/new', data=kw)
 
     def test_api_creation(self):
         r = self.new_paste(text='Hello')
@@ -196,18 +196,18 @@ class test_v1_api(TestBase):
         assert d['paste']['language'] == 'Text only'
 
     def test_404_error(self):
-        r = self.app.get('/api/v1/nonexistent')
+        r = self.client.get('/api/v1/nonexistent')
         assert r.status_code == 404
         assert r.mimetype == 'application/json'
 
     def test_405_error(self):
-        r = self.app.get('/api/v1/new')
+        r = self.client.get('/api/v1/new')
         assert r.status_code == 405
         assert r.mimetype == 'application/json'
 
     def test_get_public(self):
         self.new_paste(text='interesting things')
-        r = self.app.get('/api/v1/get?id=1')
+        r = self.client.get('/api/v1/get?id=1')
         assert r.status_code == 200
         assert r.mimetype == 'application/json'
 
@@ -215,31 +215,31 @@ class test_v1_api(TestBase):
         p = self.new_paste(text='1', unlisted=True)
         paste = json.loads(p.data)
         hash = paste['paste']['hash']
-        r = self.app.get('/api/v1/get?hash=' + hash)
+        r = self.client.get('/api/v1/get?hash=' + hash)
         assert r.status_code == 200
 
     def test_get_unlisted_by_id(self):
         self.new_paste(text='1', unlisted=True)
-        r = self.app.get('/api/v1/get?id=1')
+        r = self.client.get('/api/v1/get?id=1')
         assert r.status_code == 400
 
     def test_get_password_protected(self):
         self.new_paste(text='1', password='hunter2')
-        r = self.app.get('/api/v1/get?id=1&password=hunter2')
+        r = self.client.get('/api/v1/get?id=1&password=hunter2')
         print r.data
         assert r.status_code == 200
 
     def test_get_wrong_password(self):
         self.new_paste(text='1', password='hunter2')
-        r = self.app.get('/api/v1/get?id=1&password=hunter3')
+        r = self.client.get('/api/v1/get?id=1&password=hunter3')
         assert r.status_code == 401
 
     def test_get_nonexistent(self):
-        r = self.app.get('/api/v1/get?id=1')
+        r = self.client.get('/api/v1/get?id=1')
         assert r.status_code == 404
 
     def test_get_without_id_or_hash(self):
-        r = self.app.get('/api/v1/get')
+        r = self.client.get('/api/v1/get')
         assert r.status_code == 400
 
 
@@ -250,7 +250,7 @@ class test_admin_capabilities(TestBase):
 
     def test_login(self):
         self.add_account()
-        with self.app as c:
+        with self.client as c:
             c.post('/a/in', data=dict(
                 username='admin',
                 password='hunter2'
@@ -261,7 +261,7 @@ class test_admin_capabilities(TestBase):
 
     def test_logout(self):
         self.add_account()
-        with self.app as c:
+        with self.client as c:
             c.post('/a/in', data=dict(
                 username='admin',
                 password='hunter2'
@@ -278,12 +278,12 @@ class test_admin_capabilities(TestBase):
         self.add_account()
         p = Paste.new(text='test')
 
-        self.app.post('/a/in', data=dict(
+        self.client.post('/a/in', data=dict(
             username='admin',
             password='hunter2'
         ))
 
-        self.app.post('/a/del/' + p['hash'], data=dict(
+        self.client.post('/a/del/' + p['hash'], data=dict(
             paste_hash=p['hash']
         ))
 
