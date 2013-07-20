@@ -157,17 +157,16 @@ class test_core_functionality(TestBase):
         assert r.mimetype == 'text/plain'
 
     def test_honeypot(self):
-        with app.test_client() as c:
-            c.post('/', data=dict(
-                text='test',
-                title='',
-                password='',
-                language='text',
-                unlisted=None,
-                uid='invalid'
-            ))
+        self.app.post('/', data=dict(
+            text='test',
+            title='',
+            password='',
+            language='text',
+            unlisted=None,
+            uid='invalid'
+        ))
 
-            assert Paste.by_id(1) is None
+        assert Paste.by_id(1) is None
 
 
 class test_v1_api(TestBase):
@@ -283,15 +282,15 @@ class test_admin_capabilities(TestBase):
         self.add_account()
         with app.test_request_context():
             p = Paste.new(text='test')
-        with app.test_client() as c:
-            c.post('/a/in', data=dict(
-                username='admin',
-                password='hunter2'
-            ))
 
-            c.post('/a/del/' + p['hash'], data=dict(
-                paste_hash=p['hash']
-            ))
+        self.app.post('/a/in', data=dict(
+            username='admin',
+            password='hunter2'
+        ))
+
+        self.app.post('/a/del/' + p['hash'], data=dict(
+            paste_hash=p['hash']
+        ))
 
         paste = Paste.by_hash(p['hash'])
         assert paste is None
