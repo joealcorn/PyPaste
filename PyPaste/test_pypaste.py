@@ -10,6 +10,7 @@ from PyPaste.models.users import User
 class TestBase(object):
 
     def setUp(self):
+        app.testing = True
         app.config['CSRF_ENABLED'] = False
         self.app = app.test_client()
         Paste.init_table()
