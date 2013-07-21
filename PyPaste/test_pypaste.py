@@ -94,7 +94,7 @@ class test_core_functionality(TestBase):
 
         # Now check paste creation using the web
         r = self.client.post('/', data=dict(
-            text='test',
+            paste='test',
             title='',
             password='',
             language='text',

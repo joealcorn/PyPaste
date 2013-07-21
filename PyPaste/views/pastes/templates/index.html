@@ -18,9 +18,8 @@
 
     <form method='POST' action="{{ url_for('pastes.index') }}">
 
-        {{ form.hidden_tag(form.csrf_token) }}
-        {{ form.uid }}
-        {{ form.text(placeholder='Text goes here', autofocus='') }}
+        {{ form.hidden_tag(form.csrf_token, form.text) }}
+        {{ form.paste(placeholder='Text goes here', autofocus='') }}
         {{ form.title(placeholder="Title (Optional)", maxlength=50, autocomplete='off') }}
         {{ form.password(placeholder="Password (Optional)", autocomplete='off') }}
 

@@ -24,7 +24,7 @@ def index():
         # this lamba switches them to None
         f = lambda s: s if s != '' else None
         vals = {
-            'text': form.text.data,
+            'text': form.paste.data,
             'title': f(form.title.data),
             'language': f(form.language.data),
             'password': f(form.password.data),
