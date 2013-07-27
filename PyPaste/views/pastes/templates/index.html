@@ -16,12 +16,12 @@
 
 {% block body %}
 
-    <form method='POST' action="{{ url_for('pastes.index') }}">
+    <form method='POST' action="{{ url_for('pastes.index') }}" autocomplete='off'>
 
         {{ form.hidden_tag(form.csrf_token, form.text) }}
         {{ form.paste(placeholder='Text goes here', autofocus='') }}
-        {{ form.title(placeholder="Title (Optional)", maxlength=50, autocomplete='off') }}
-        {{ form.password(placeholder="Password (Optional)", autocomplete='off') }}
+        {{ form.title(placeholder="Title (Optional)", maxlength=50) }}
+        {{ form.password(placeholder="Password (Optional)") }}
 
         {{ form.language(**{'data-placeholder': 'Language'}) }}
 
