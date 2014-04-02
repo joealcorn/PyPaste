@@ -21,7 +21,7 @@ def index():
     form = NewPaste()
     if form.validate_on_submit():
         # WTForms passes '' for empty text values,
-        # this lamba switches them to None
+        # this lambda switches them to None
         f = lambda s: s if s != '' else None
         vals = {
             'text': form.paste.data,
